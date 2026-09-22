@@ -1,0 +1,25 @@
+{
+  "slug": "komatsu",
+  "name": "کوماتسو",
+  "category": "بیل مکانیکی",
+  "price": "",
+  "image": "/images/vehicles/komatsu/photo-1.jpeg",
+  "images": [
+    "/images/vehicles/komatsu/photo-1.jpeg",
+    "/images/vehicles/komatsu/photo-2.jpeg",
+    "/images/vehicles/komatsu/photo-3.jpeg",
+    "/images/vehicles/komatsu/photo-4.jpeg",
+    "/images/vehicles/komatsu/photo-5.jpeg",
+    "/images/vehicles/komatsu/photo-6.jpeg",
+    "/images/vehicles/komatsu/photo-7.jpeg"
+  ],
+  "videos": [],
+  "shortDescription": "بیل مکانیکی کوماتسو - سلامت فنی عالی",
+  "description": "بیل مکانیکی کوماتسو با سلامت فنی عالی. مناسب برای پروژه‌های عمرانی، معدنی و راه‌سازی. کارکرد تمیز و بدون نیاز به سرویس اساسی. برای دریافت اطلاعات بیشتر و قیمت با مشاورین ما تماس بگیرید.",
+  "specifications": {
+    "برند": "کوماتسو (Komatsu)",
+    "نوع محصول": "بیل مکانیکی",
+    "وضعیت": "کارکرده - سالم"
+  },
+  "available": true
+}

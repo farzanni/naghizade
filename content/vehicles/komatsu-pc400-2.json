@@ -1,0 +1,29 @@
+{
+  "slug": "komatsu-pc400-2",
+  "name": "کوماتسو PC400 (دومین دستگاه)",
+  "category": "بیل مکانیکی",
+  "price": "",
+  "image": "/images/vehicles/komatsu-pc400-2/photo-1.jpeg",
+  "images": [
+    "/images/vehicles/komatsu-pc400-2/photo-1.jpeg",
+    "/images/vehicles/komatsu-pc400-2/photo-2.jpeg",
+    "/images/vehicles/komatsu-pc400-2/photo-3.jpeg"
+  ],
+  "videos": [
+    "/images/vehicles/komatsu-pc400-2/video-1.mp4",
+    "/images/vehicles/komatsu-pc400-2/video-2.mp4",
+    "/images/vehicles/komatsu-pc400-2/video-3.mp4",
+    "/images/vehicles/komatsu-pc400-2/video-4.mp4"
+  ],
+  "shortDescription": "بیل مکانیکی کوماتسو PC400 - دومین دستگاه موجود",
+  "description": "بیل مکانیکی کوماتسو PC400 - دومین دستگاه موجود در انبار. مناسب برای پروژه‌های عمرانی، معدنی و راه‌سازی. کارکرد تمیز و بدون نیاز به سرویس اساسی. برای دریافت اطلاعات بیشتر و قیمت با مشاورین ما تماس بگیرید.",
+  "specifications": {
+    "برند": "کوماتسو (Komatsu)",
+    "مدل": "PC400",
+    "وزن عملیاتی": "۴۰ تن",
+    "ظرفیت بیل": "۲.۰ مترمکعب",
+    "وضعیت": "کارکرده - سالم",
+    "نوع محصول": "بیل مکانیکی"
+  },
+  "available": true
+}

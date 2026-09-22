@@ -1,0 +1,236 @@
+/* ============================================================
+   NavBar — deep crimson & black, glassy scroll effect
+   ============================================================ */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  transition: background 400ms ease, border-color 400ms ease, box-shadow 400ms ease;
+}
+
+/* ── Scrolled state: floating glass pill ── */
+.headerScrolled {
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  transition: all 400ms ease;
+}
+
+/* When scrolled, transform nav into a centered floating crimson glass pill */
+.headerScrolled .nav {
+  height: 60px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  padding: 0 16px;
+  max-width: 720px;
+  background: rgba(17, 11, 16, 0.55);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(185, 28, 28, 0.15);
+  border-radius: 999px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 0 20px var(--color-accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  animation: navSlideDown 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes navSlideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ── Brand ── */
+.brand {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  line-height: 1;
+  gap: 2px;
+  transition: opacity var(--transition);
+}
+
+.brand:hover {
+  opacity: 0.85;
+}
+
+.brandMark {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: 0.01em;
+  transition: font-size 400ms ease;
+}
+
+.headerScrolled .brandMark {
+  font-size: 1.15rem;
+}
+
+.brandSub {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  direction: ltr;
+  text-align: right;
+  transition: opacity 400ms ease, font-size 400ms ease;
+}
+
+.headerScrolled .brandSub {
+  font-size: 0.65rem;
+  opacity: 0.8;
+}
+
+/* ── Menu links ── */
+.menu {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.link {
+  display: inline-block;
+  padding: 10px 16px;
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition), background-color var(--transition);
+  white-space: nowrap;
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--color-text);
+  background-color: var(--color-surface-2);
+}
+
+.headerScrolled .link:hover,
+.headerScrolled .link:focus-visible {
+  background-color: rgba(185, 28, 28, 0.12);
+}
+
+.link[aria-current="page"] {
+  color: var(--color-text);
+  font-weight: 600;
+  position: relative;
+}
+
+.link[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: var(--color-accent);
+  border-radius: 1px;
+  box-shadow: 0 0 8px var(--color-accent-glow);
+}
+
+/* ── Hamburger (mobile) ── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--color-muted);
+  border-radius: 1px;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.barTop {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.barMid {
+  opacity: 0;
+}
+
+.barBot {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .menu {
+    position: absolute;
+    top: 72px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 300ms ease;
+  }
+
+  .menuOpen {
+    max-height: 320px;
+  }
+
+  .link {
+    display: block;
+    padding: 14px 24px;
+    border-radius: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .link[aria-current="page"]::after {
+    display: none;
+  }
+
+  /* Mobile scrolled state — keep full width but add crimson glass */
+  .headerScrolled .nav {
+    max-width: none;
+    margin-top: 8px;
+    margin-left: 12px;
+    margin-right: 12px;
+    border-radius: 20px;
+  }
+}

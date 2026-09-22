@@ -1,0 +1,30 @@
+{
+  "slug": "kobelco-sk350",
+  "name": "کوبلکو SK350",
+  "category": "بیل مکانیکی",
+  "price": "",
+  "image": "/images/vehicles/kobelco-sk350/photo-1.jpeg",
+  "images": [
+    "/images/vehicles/kobelco-sk350/photo-1.jpeg",
+    "/images/vehicles/kobelco-sk350/photo-2.jpeg",
+    "/images/vehicles/kobelco-sk350/photo-3.jpeg",
+    "/images/vehicles/kobelco-sk350/photo-4.jpeg",
+    "/images/vehicles/kobelco-sk350/photo-5.jpeg"
+  ],
+  "videos": [
+    "/images/vehicles/kobelco-sk350/video-1.mp4",
+    "/images/vehicles/kobelco-sk350/video-2.mp4",
+    "/images/vehicles/kobelco-sk350/video-3.mp4"
+  ],
+  "shortDescription": "بیل مکانیکی کوبلکو SK350 سری جدید - سلامت فنی عالی",
+  "description": "بیل مکانیکی کوبلکو SK350 مدل جدید با سلامت فنی عالی. مناسب برای پروژه‌های عمرانی، معدنی و راه‌سازی. کارکرد تمیز و بدون نیاز به سرویس اساسی. برای دریافت اطلاعات بیشتر و قیمت با مشاورین ما تماس بگیرید.",
+  "specifications": {
+    "برند": "کوبلکو (Kobelco)",
+    "مدل": "SK350",
+    "وزن عملیاتی": "۳۵ تن",
+    "ظرفیت بیل": "۱.۶ مترمکعب",
+    "وضعیت": "کارکرده - سالم",
+    "نوع محصول": "بیل مکانیکی"
+  },
+  "available": true
+}
