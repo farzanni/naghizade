@@ -9,4 +9,3 @@ build/
 .env*
 .hermes/
 
-public/images/vehicles/
