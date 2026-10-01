@@ -1,12 +1,13 @@
 import { getVehicle, getVehicles } from "@/lib/vehicles";
+import { SITE_URL, BUSINESS } from "@/lib/site";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import Gallery from "./Gallery";
+import styles from "./Vehicle.module.css";
 
 export async function generateStaticParams() {
-  const vehicles = getVehicles();
-  return vehicles.map((v) => ({ slug: v.slug }));
+  return getVehicles().map((v) => ({ slug: v.slug }));
 }
 
 export async function generateMetadata({
@@ -16,10 +17,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const vehicle = getVehicle(slug);
-  if (!vehicle) return {};
+  if (!vehicle) return { title: "موردی یافت نشد" };
+
   return {
     title: vehicle.name,
-    description: vehicle.shortDescription,
+    description: vehicle.shortDescription || vehicle.description,
+    alternates: { canonical: `/trucks/${vehicle.slug}` },
+    openGraph: {
+      title: vehicle.name,
+      description: vehicle.shortDescription || vehicle.description,
+      images: vehicle.image ? [{ url: vehicle.image }] : undefined,
+    },
   };
 }
 
@@ -31,23 +39,44 @@ export default async function VehicleDetailPage({
   const { slug } = await params;
   const vehicle = getVehicle(slug);
 
-  if (!vehicle) {
-    notFound();
-  }
+  if (!vehicle) notFound();
 
-  const jsonLd = {
+  const specs = Object.entries(vehicle.specifications);
+
+  /* JSON-LD: only emit an Offer when there is a real price.
+     An empty `price` is invalid and gets the whole block rejected. */
+  const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: vehicle.name,
-    description: vehicle.description,
-    image: vehicle.image,
+    description: vehicle.description || vehicle.shortDescription,
+    category: vehicle.category,
+    brand: {
+      "@type": "Brand",
+      name: vehicle.specifications["برند"] ?? BUSINESS.name,
+    },
+    ...(vehicle.image && { image: `${SITE_URL}${vehicle.image}` }),
+    ...(specs.length > 0 && {
+      additionalProperty: specs.map(([key, value]) => ({
+        "@type": "PropertyValue",
+        name: key,
+        value,
+      })),
+    }),
     offers: {
       "@type": "Offer",
-      priceCurrency: "IRR",
-      price: "",
       availability: vehicle.available
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
+      priceCurrency: "IRR",
+      url: `${SITE_URL}/trucks/${vehicle.slug}`,
+      seller: {
+        "@type": "Organization",
+        name: BUSINESS.name,
+        telephone: BUSINESS.phoneHref,
+      },
+      // Price on request — omit `price` entirely rather than sending "".
+      ...(vehicle.price.trim() && { price: vehicle.price.trim() }),
     },
   };
 
@@ -58,221 +87,112 @@ export default async function VehicleDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="section">
+      <article className={`section ${styles.page}`}>
         <div className="container">
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 360px",
-              gap: "40px",
-              alignItems: "start",
-            }}
-          >
-            {/* Main content */}
-            <div>
-              {/* Main image */}
-              <div
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  paddingTop: "56.25%",
-                  borderRadius: "var(--radius-md)",
-                  overflow: "hidden",
-                  background: "var(--color-surface-2)",
-                  marginBottom: "16px",
-                }}
-              >
-                <Image
-                  src={vehicle.image}
-                  alt={vehicle.name}
-                  fill
-                  style={{ objectFit: "cover" }}
-                  priority
-                />
-              </div>
+          <nav className={styles.breadcrumb} aria-label="مسیر صفحه">
+            <Link href="/">خانه</Link>
+            <span aria-hidden="true">/</span>
+            <Link href="/trucks">خودروهای سنگین</Link>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">{vehicle.name}</span>
+          </nav>
 
-              {/* Thumbnail gallery */}
-              {vehicle.images && vehicle.images.length > 1 && (
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: `repeat(${Math.min(vehicle.images.length, 4)}, 1fr)`,
-                    gap: "8px",
-                    marginBottom: "32px",
-                  }}
-                >
-                  {vehicle.images.slice(0, 4).map((img, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        position: "relative",
-                        paddingTop: "66.67%",
-                        borderRadius: "var(--radius-sm)",
-                        overflow: "hidden",
-                        background: "var(--color-surface-2)",
-                      }}
-                    >
-                      <Image
-                        src={img}
-                        alt={`${vehicle.name} - تصویر ${i + 1}`}
-                        fill
-                        style={{ objectFit: "cover" }}
-                      />
-                    </div>
-                  ))}
-                </div>
+          <div className={styles.layout}>
+            {/* ── Main column ── */}
+            <div className={styles.main}>
+              <Gallery images={vehicle.images} name={vehicle.name} />
+
+              <header className={styles.header}>
+                {vehicle.category && (
+                  <p className={styles.category}>{vehicle.category}</p>
+                )}
+                <h1 className={styles.title}>{vehicle.name}</h1>
+                {vehicle.description && (
+                  <p className={styles.description}>{vehicle.description}</p>
+                )}
+              </header>
+
+              {specs.length > 0 && (
+                <section className={styles.block} aria-labelledby="specs-heading">
+                  <h2 id="specs-heading" className={styles.blockTitle}>
+                    مشخصات فنی
+                  </h2>
+                  <dl className={styles.specs}>
+                    {specs.map(([key, value]) => (
+                      <div key={key} className={styles.spec}>
+                        <dt className={styles.specKey}>{key}</dt>
+                        <dd className={styles.specValue}>{value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
               )}
 
-              <p
-                className="text-muted"
-                style={{
-                  fontSize: "0.85rem",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  marginBottom: "8px",
-                }}
-              >
-                {vehicle.category}
-              </p>
-              <h1
-                style={{
-                  fontSize: "2.4rem",
-                  fontWeight: 700,
-                  lineHeight: 1.2,
-                  marginBottom: "16px",
-                }}
-              >
-                {vehicle.name}
-              </h1>
-              <p
-                className="text-muted"
-                style={{ fontSize: "1.05rem", lineHeight: 1.8, marginBottom: "32px" }}
-              >
-                {vehicle.description}
-              </p>
-
-              {/* Videos */}
-              {vehicle.videos && vehicle.videos.length > 0 && (
-                <>
-                  <h2
-                    style={{
-                      fontSize: "1.4rem",
-                      fontWeight: 600,
-                      marginBottom: "16px",
-                    }}
-                  >
+              {vehicle.videos.length > 0 && (
+                <section className={styles.block} aria-labelledby="video-heading">
+                  <h2 id="video-heading" className={styles.blockTitle}>
                     ویدیو
                   </h2>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                      gap: "16px",
-                      marginBottom: "32px",
-                    }}
-                  >
+                  <div className={styles.videos}>
                     {vehicle.videos.map((video, i) => (
                       <video
-                        key={i}
+                        key={video}
+                        className={styles.video}
                         controls
-                        preload="metadata"
-                        style={{
-                          width: "100%",
-                          borderRadius: "var(--radius-sm)",
-                          background: "#000",
-                        }}
+                        preload="none"
+                        playsInline
+                        poster={video.replace(/\.mp4$/, "-poster.jpg")}
+                        aria-label={`ویدیو ${i + 1} از ${vehicle.name}`}
                       >
                         <source src={video} type="video/mp4" />
+                        مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
                       </video>
                     ))}
                   </div>
-                </>
+                </section>
               )}
+            </div>
 
-              {/* Specs grid */}
-              <h2
-                style={{
-                  fontSize: "1.4rem",
-                  fontWeight: 600,
-                  marginBottom: "16px",
-                }}
-              >
-                مشخصات فنی
-              </h2>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-                  gap: "16px",
-                }}
-              >
-                {Object.entries(vehicle.specifications).map(([key, value]) => (
-                  <div
-                    key={key}
-                    style={{
-                      background: "var(--color-surface)",
-                      border: "1px solid var(--color-border)",
-                      borderRadius: "var(--radius-sm)",
-                      padding: "16px",
-                    }}
+            {/* ── Sticky CTA ── */}
+            <aside className={styles.aside} aria-labelledby="cta-heading">
+              <div className={styles.ctaCard}>
+                <p className={styles.ctaLabel}>قیمت و مشاوره</p>
+                <p id="cta-heading" className={styles.ctaHeadline}>
+                  {vehicle.price.trim() ? vehicle.price : "تماس بگیرید"}
+                </p>
+
+                <div className={styles.ctaButtons}>
+                  <a
+                    href={`tel:${BUSINESS.phoneHref}`}
+                    className={`btn btnPrimary btnBlock`}
                   >
-                    <p
-                      className="text-muted"
-                      style={{ fontSize: "0.8rem", marginBottom: "4px" }}
-                    >
-                      {key}
-                    </p>
-                    <p style={{ fontWeight: 600 }}>{value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+                    تماس تلفنی با کارشناس
+                  </a>
+                  <Link href="/#contact" className="btn btnGhost btnBlock">
+                    ثبت درخواست مشاوره
+                  </Link>
+                </div>
 
-            {/* Sticky CTA card */}
-            <div
-              style={{
-                position: "sticky",
-                top: "100px",
-                background: "var(--color-surface)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-md)",
-                padding: "32px",
-                boxShadow: "var(--shadow-card)",
-              }}
-            >
-              <p
-                className="text-muted"
-                style={{ fontSize: "0.85rem", marginBottom: "8px" }}
-              >
-                قیمت و مشاوره
-              </p>
-              <p
-                style={{
-                  fontSize: "1.4rem",
-                  fontWeight: 700,
-                  color: "var(--color-accent)",
-                  marginBottom: "24px",
-                }}
-              >
-                تماس بگیرید
-              </p>
-              <Link
-                href="/#contact"
-                className="btn btn-primary"
-                style={{ width: "100%", fontSize: "1.05rem", padding: "14px" }}
-              >
-                استعلام قیمت و مشاوره خرید
-              </Link>
-              <p
-                className="text-muted"
-                style={{ fontSize: "0.8rem", marginTop: "12px", textAlign: "center" }}
-              >
-                جهت دریافت مشاوره تخصصی، شرایط پرداخت و هماهنگی بازدید حضوری با ما تماس بگیرید.
-              </p>
-            </div>
+                <p className={styles.ctaNote}>
+                  جهت دریافت مشاوره تخصصی، شرایط پرداخت و هماهنگی بازدید حضوری با
+                  ما تماس بگیرید.
+                </p>
+
+                <dl className={styles.ctaMeta}>
+                  <div>
+                    <dt>ساعات پاسخگویی</dt>
+                    <dd>{BUSINESS.hours}</dd>
+                  </div>
+                  <div>
+                    <dt>وضعیت</dt>
+                    <dd>{vehicle.available ? "موجود" : "ناموجود"}</dd>
+                  </div>
+                </dl>
+              </div>
+            </aside>
           </div>
         </div>
-      </section>
+      </article>
     </>
   );
 }

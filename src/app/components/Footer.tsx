@@ -1,123 +1,66 @@
 import Link from "next/link";
+import { BUSINESS, NAV_LINKS } from "@/lib/site";
+import styles from "./Footer.module.css";
+
+const YEAR = new Date().getFullYear();
 
 export default function Footer() {
   return (
-    <footer
-      style={{
-        background: "var(--color-surface)",
-        borderTop: "1px solid var(--color-border)",
-        padding: "48px 0",
-        marginTop: "80px",
-      }}
-    >
-      <div
-        className="container"
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          gap: "32px",
-          flexWrap: "wrap",
-        }}
-      >
-        <div>
-          <h2
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: 700,
-              marginBottom: "8px",
-              color: "var(--color-text)",
-            }}
-          >
-            بازرگانی نقی‌زاده
-          </h2>
-          <p className="text-muted" style={{ fontSize: "0.9rem" }}>
-            مرجع تخصصی خرید، فروش و واردات انواع خودروهای سنگین و کشنده در ایران.
+    <footer className={styles.footer}>
+      <div className={`container ${styles.inner}`}>
+        <div className={styles.brandCol}>
+          <Link href="/" className={styles.brand} aria-label={BUSINESS.name}>
+            <span className={styles.brandMark}>{BUSINESS.shortName}</span>
+            <span className={styles.brandSub}>بازرگانی تخصصی</span>
+          </Link>
+          <p className={styles.brandText}>
+            مرجع تخصصی خرید، فروش، واردات و ترخیص انواع خودروهای سنگین، کشنده و
+            ماشین‌آلات راه‌سازی در ایران.
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "40px", flexWrap: "wrap" }}>
-          <div>
-            <h3
-              style={{
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                color: "var(--color-accent)",
-                marginBottom: "12px",
-              }}
-            >
-              دسته‌بندی‌ها
-            </h3>
-            <ul
-              style={{
-                listStyle: "none",
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px",
-                fontSize: "0.9rem",
-              }}
-            >
-              <li>
-                <Link href="/trucks" style={{ color: "var(--color-muted)" }}>
-                  کامیون و کشنده
+        <nav className={styles.col} aria-labelledby="footer-nav">
+          <h2 id="footer-nav" className={styles.colTitle}>
+            دسترسی سریع
+          </h2>
+          <ul className={styles.list}>
+            {NAV_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className={styles.listLink}>
+                  {link.label}
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/construction"
-                  style={{ color: "var(--color-muted)" }}
-                >
-                  ماشین‌آلات راه‌سازی و کشاورزی
-                </Link>
-              </li>
-            </ul>
-          </div>
+            ))}
+          </ul>
+        </nav>
 
-          <div>
-            <h3
-              style={{
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                color: "var(--color-accent)",
-                marginBottom: "12px",
-              }}
-            >
-              تماس با ما
-            </h3>
-            <p
-              style={{
-                fontSize: "0.9rem",
-                color: "var(--color-muted)",
-                lineHeight: 1.6,
-              }}
-            >
-              تلفن: <span style={{ color: "var(--color-text)" }}>۰۹۱۲۳۴۵۶۷۸۹</span>
-              <br />
-              ایمیل:{" "}
-              <Link
-                href="mailto:info@flodesk.ir"
-                style={{ color: "var(--color-accent)" }}
-              >
-                info@flodesk.ir
-              </Link>
-            </p>
-          </div>
+        <div className={styles.col}>
+          <h2 className={styles.colTitle}>تماس با ما</h2>
+          <ul className={styles.list}>
+            <li>
+              <a href={`tel:${BUSINESS.phoneHref}`} className={styles.listLink}>
+                <span className={styles.contactLabel}>تلفن:</span>{" "}
+                <span dir="ltr">{BUSINESS.phone}</span>
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${BUSINESS.email}`} className={styles.listLink}>
+                <span className={styles.contactLabel}>ایمیل:</span>{" "}
+                <span dir="ltr">{BUSINESS.email}</span>
+              </a>
+            </li>
+            <li className={styles.contactPlain}>
+              <span className={styles.contactLabel}>ساعات پاسخگویی:</span>{" "}
+              {BUSINESS.hours}
+            </li>
+          </ul>
         </div>
       </div>
 
-      <div
-        className="container text-center text-muted"
-        style={{
-          paddingTop: "24px",
-          fontSize: "0.8rem",
-          borderTop: "1px solid var(--color-border)",
-        }}
-      >
-        تمامی حقوق مادی و معنوی برای بازرگانی نقی‌زاده محفوظ است. {new Date().getFullYear()}
+      <div className={`container ${styles.bottom}`}>
+        <p className={styles.copyright}>
+          تمامی حقوق مادی و معنوی برای {BUSINESS.name} محفوظ است. {YEAR}
+        </p>
       </div>
     </footer>
   );

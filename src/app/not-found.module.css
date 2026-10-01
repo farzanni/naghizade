@@ -1,0 +1,51 @@
+/* ============================================================
+   404
+   ============================================================ */
+
+.page {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+  padding: var(--space-20) 0;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 52ch;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.code {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 10vw, 6rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-accent);
+  margin: 0;
+  opacity: 0.85;
+}
+
+.title {
+  font-size: var(--text-2xl);
+  margin: 0;
+}
+
+.text {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}

@@ -1,0 +1,71 @@
+/* ============================================================
+   Home page sections
+   ============================================================ */
+
+.featured {
+  position: relative;
+}
+
+/* ── Section header ── */
+.head {
+  margin-bottom: var(--space-10);
+  max-width: 66ch;
+}
+
+.title {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-4);
+}
+
+.lead {
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.moreWrap {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-10);
+}
+
+/* ── Trust strip ── */
+.trust {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ── Contact ── */
+.contact {
+  position: relative;
+}
+
+.contactInner {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.contactHead {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.contactHead .lead {
+  margin-top: var(--space-3);
+}
+
+@media (max-width: 768px) {
+  .head {
+    margin-bottom: var(--space-8);
+  }
+
+  .title {
+    font-size: var(--text-2xl);
+  }
+
+  .lead {
+    font-size: var(--text-base);
+  }
+}

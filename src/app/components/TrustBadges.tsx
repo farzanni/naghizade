@@ -9,18 +9,16 @@ const signals = [
 
 export default function TrustBadges() {
   return (
-    <div className={styles.wrap}>
-      <div className={styles.grid}>
-        {signals.map((s) => (
-          <div key={s.label} className={styles.col}>
-            <div className={styles.number}>
-              <span className={styles.value}>{s.value}</span>
-              <span className={styles.unit}>{s.unit}</span>
-            </div>
-            <p className={styles.label}>{s.label}</p>
-          </div>
-        ))}
-      </div>
-    </div>
+    <dl className={styles.grid}>
+      {signals.map((s) => (
+        <div key={s.label} className={styles.col}>
+          <dt className={styles.number}>
+            <span className={styles.value}>{s.value}</span>
+            <span className={styles.unit}>{s.unit}</span>
+          </dt>
+          <dd className={styles.label}>{s.label}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

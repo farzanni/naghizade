@@ -3,11 +3,21 @@
 import Link from "next/link";
 import styles from "./Hero.module.css";
 
-/* ---------- sub-components (each < 60 lines) ---------- */
+/* ════════════════════════════════════════════════════════════
+   Hero — full-screen, crimson & black, liquid glass panel.
+
+   Composed of small focused sub-components. Entrance motion is
+   slow and decelerating: no bounce, no overshoot.
+   ════════════════════════════════════════════════════════════ */
+
+const BRAND_WORDS = [
+  { text: "بازرگانی تخصصی", large: false },
+  { text: "نقی‌زاده", large: true },
+] as const;
 
 function HeroBackground() {
   return (
-    <div className={styles.heroBg}>
+    <div className={styles.bg}>
       <picture>
         <source
           srcSet="
@@ -30,128 +40,84 @@ function HeroBackground() {
           type="image/jpeg"
         />
         <img
-          className={styles.heroImg}
-          src="/images/assets/hero-logistics-1920.jpg"
-          alt="بازرگانی نقی‌زاده — خرید، فروش و واردات تخصصی خودروهای سنگین، کشنده و ماشین‌آلات راه‌سازی"
-          onLoad={() => {
-            const fallback = document.querySelector(`.${styles.heroImgFallbackHidden}`) as HTMLImageElement | null;
-            if (fallback) fallback.style.display = "none";
-          }}
-          onError={() => {
-            const fallback = document.querySelector(`.${styles.heroImgFallbackHidden}`) as HTMLImageElement | null;
-            if (fallback) fallback.style.display = "block";
-          }}
-        />
-        <img
-          className={styles.heroImgFallbackHidden}
+          className={styles.bgImg}
           src="/images/assets/hero-logistics-1920.jpg"
           alt=""
-          style={{ display: "block" }}
+          fetchPriority="high"
+          decoding="async"
         />
       </picture>
     </div>
   );
 }
 
-function HeroOverlay() {
-  return <div className={styles.heroOverlay} />;
-}
-
-function HeroGlow() {
-  return <div className={styles.heroGlow} />;
-}
-
-/* ── Brand: word-by-word slamming fly-in from right ── */
-
-const BRAND_WORDS = ["بازرگانی تخصصی", "نقی‌زاده"];
-
-function HeroBrandTop() {
+function HeroBrand() {
   return (
-    <div className={styles.brandTop}>
-      <span className={styles.brandTopGlow} />
-      {BRAND_WORDS.map((word, i) => (
-        <span
-          key={i}
-          className={`${styles.brandWord} ${i === BRAND_WORDS.length - 1 ? styles.brandWordLarge : ""}`}
-          style={{ animationDelay: `${0.8 + i * 0.3}s` }}
-        >
-          {word}
-        </span>
-      ))}
+    <div className={styles.brand}>
+      <span className={styles.brandGlow} aria-hidden="true" />
+      <h1 id="hero-brand" className={styles.brandHeading}>
+        {BRAND_WORDS.map((word, i) => (
+          <span
+            key={word.text}
+            className={`${styles.brandWord} ${
+              word.large ? styles.brandWordLarge : ""
+            }`}
+            style={{ animationDelay: `${0.4 + i * 0.25}s` }}
+          >
+            {word.text}
+          </span>
+        ))}
+      </h1>
     </div>
   );
 }
 
-function HeroSubtitle() {
+function HeroPanel({ inventoryHref }: { inventoryHref: string }) {
   return (
-    <p className={styles.subtitle}>
-      واردات و عرضه تخصصی انواع کشنده، کامیون و ماشین‌آلات راه‌سازی با قطعات یدکی اصلی
-    </p>
-  );
-}
+    <div className={styles.panel}>
+      <div className={styles.panelInner}>
+        <p className={styles.subtitle}>
+          واردات و عرضه تخصصی انواع کشنده، کامیون و ماشین‌آلات راه‌سازی با
+          قطعات یدکی اصلی
+        </p>
 
-function HeroCTAs() {
-  return (
-    <div className={styles.ctaRow}>
-      <Link href="/trucks" className={`${styles.btn} ${styles.btnPrimary}`}>
-        مشاهده کشنده‌ها و کامیون‌ها
-      </Link>
-      <Link href="/#contact" className={`${styles.btn} ${styles.btnSecondary}`}>
-        دریافت مشاوره رایگان
-      </Link>
-    </div>
-  );
-}
+        <div className={styles.ctaRow}>
+          <Link
+            href={inventoryHref}
+            className={`${styles.btn} ${styles.btnPrimary}`}
+          >
+            مشاهده کشنده‌ها و کامیون‌ها
+          </Link>
+          <Link
+            href="/#contact"
+            className={`${styles.btn} ${styles.btnGlass}`}
+          >
+            دریافت مشاوره رایگان
+          </Link>
+        </div>
 
-function HeroTrustLine() {
-  return (
-    <p className={styles.trustLine}>
-      واردات مستقیم و بدون واسطه · ضمانت سلامت و اصالت · پشتیبانی تخصصی
-    </p>
-  );
-}
-
-function HeroGlassPanel() {
-  return (
-    <div className={styles.heroPanel}>
-      <div className={styles.heroPanelContent}>
-        <HeroSubtitle />
-        <HeroCTAs />
-        <HeroTrustLine />
+        <ul className={styles.trustLine}>
+          <li>واردات مستقیم و بدون واسطه</li>
+          <li>ضمانت سلامت و اصالت</li>
+          <li>پشتیبانی تخصصی</li>
+        </ul>
       </div>
     </div>
   );
 }
 
-function HeroTopAccents() {
+export default function Hero({ inventoryHref }: { inventoryHref: string }) {
   return (
-    <>
-      <div className={styles.topAccentRight} />
-      <div className={styles.topAccentLeft} />
-    </>
-  );
-}
-
-function HeroTagline() {
-  return (
-    <div className={styles.tagline}>
-      <p className={styles.taglineText}>مرجع تخصصی خودروهای سنگین و کشنده</p>
-    </div>
-  );
-}
-
-/* ---------- main Hero composition ---------- */
-
-export default function Hero() {
-  return (
-    <section className={styles.hero}>
+    <section className={styles.hero} aria-labelledby="hero-brand">
       <HeroBackground />
-      <HeroOverlay />
-      <HeroGlow />
-      <HeroBrandTop />
-      <HeroGlassPanel />
-      <HeroTopAccents />
-      <HeroTagline />
+      <div className={styles.overlay} aria-hidden="true" />
+      <div className={styles.glow} aria-hidden="true" />
+      <div id="hero-brand-wrap">
+        <HeroBrand />
+      </div>
+      <HeroPanel inventoryHref={inventoryHref} />
+      <div className={styles.accentRight} aria-hidden="true" />
+      <div className={styles.accentLeft} aria-hidden="true" />
     </section>
   );
 }

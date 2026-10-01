@@ -1,71 +1,165 @@
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_FORMSPREE_ID";
+"use client";
+
+import { useState, type FormEvent } from "react";
+import styles from "./LeadForm.module.css";
+
+type Status = "idle" | "submitting" | "success" | "error";
+
+/**
+ * Consultation request form.
+ *
+ * Submits to a configurable endpoint. While no endpoint is configured the
+ * form validates input and shows an honest fallback that routes the visitor
+ * to the phone number instead of silently dropping the lead.
+ */
+const ENDPOINT = process.env.NEXT_PUBLIC_LEAD_ENDPOINT ?? "";
+
+const PHONE_HREF = "tel:+989123456789";
 
 export default function LeadForm() {
-  return (
-    <form
-      action={FORMSPREE_ENDPOINT}
-      method="POST"
-      style={{
-        background: "var(--color-surface)",
-        border: "1px solid var(--color-border)",
-        borderRadius: "var(--radius-md)",
-        padding: "32px",
-        boxShadow: "var(--shadow-card)",
-      }}
-    >
-      <input type="hidden" name="_subject" value="بازرگانی نقی‌زاده: درخواست جدید مشاوره از سایت" />
-      <input type="hidden" name="_captcha" value="false" />
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState("");
 
-      <div style={{ marginBottom: "16px" }}>
-        <label
-          style={{
-            display: "block",
-            fontSize: "0.9rem",
-            fontWeight: 500,
-            marginBottom: "6px",
-            color: "var(--color-text)",
-          }}
-          htmlFor="fullName"
-        >
-          نام و نام خانوادگی *
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    setError("");
+
+    // No endpoint configured — don't pretend the lead was captured.
+    if (!ENDPOINT) {
+      setStatus("error");
+      setError(
+        "ثبت آنلاین درخواست در حال حاضر فعال نیست. لطفاً برای مشاوره فوری با ما تماس بگیرید."
+      );
+      return;
+    }
+
+    setStatus("submitting");
+
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        body: data,
+        headers: { Accept: "application/json" },
+      });
+
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+
+      form.reset();
+      setStatus("success");
+    } catch {
+      setStatus("error");
+      setError(
+        "ارسال درخواست با خطا مواجه شد. لطفاً دوباره تلاش کنید یا با ما تماس بگیرید."
+      );
+    }
+  }
+
+  if (status === "success") {
+    return (
+      <div className={styles.success} role="status">
+        <CheckIcon />
+        <h3 className={styles.successTitle}>درخواست شما ثبت شد</h3>
+        <p className={styles.successText}>
+          کارشناسان بازرگانی نقی‌زاده در کوتاه‌ترین زمان با شما تماس خواهند گرفت.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form className={styles.form} onSubmit={handleSubmit} noValidate={false}>
+      <input
+        type="hidden"
+        name="_subject"
+        value="بازرگانی نقی‌زاده: درخواست جدید مشاوره از سایت"
+      />
+
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="fullName">
+          نام و نام خانوادگی
+          <span className={styles.required} aria-hidden="true">
+            *
+          </span>
         </label>
-        <input id="fullName" type="text" name="fullName" required placeholder="مثلاً: محمد رضایی" />
+        <input
+          id="fullName"
+          className={styles.input}
+          type="text"
+          name="fullName"
+          required
+          autoComplete="name"
+          placeholder="مثلاً: محمد رضایی"
+          aria-required="true"
+        />
       </div>
 
-      <div style={{ marginBottom: "24px" }}>
-        <label
-          style={{
-            display: "block",
-            fontSize: "0.9rem",
-            fontWeight: 500,
-            marginBottom: "6px",
-            color: "var(--color-text)",
-          }}
-          htmlFor="phone"
-        >
-          شماره همراه *
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="phone">
+          شماره همراه
+          <span className={styles.required} aria-hidden="true">
+            *
+          </span>
         </label>
         <input
           id="phone"
+          className={styles.input}
           type="tel"
           name="phone"
           required
+          autoComplete="tel"
+          inputMode="tel"
           placeholder="مثلاً: ۰۹۱۲۳۴۵۶۷۸۹"
-          pattern="[0-9۰-۹]{11}"
+          aria-required="true"
+          aria-describedby="phone-hint"
         />
+        <p id="phone-hint" className={styles.hint}>
+          شماره تماس شما صرفاً برای هماهنگی مشاوره استفاده می‌شود.
+        </p>
       </div>
 
       <button
         type="submit"
-        className="btn btn-primary"
-        style={{ width: "100%", fontSize: "1.05rem", padding: "14px" }}
+        className={styles.submit}
+        disabled={status === "submitting"}
       >
-        ثبت درخواست مشاوره
+        {status === "submitting" ? "در حال ارسال…" : "ثبت درخواست مشاوره"}
       </button>
 
-      <p className="text-muted" style={{ fontSize: "0.8rem", marginTop: "12px" }}>
-        اطلاعات شما نزد ما محفوظ بوده و صرفاً جهت مشاوره و هماهنگی خرید استفاده می‌شود.
+      {status === "error" && (
+        <div className={styles.error} role="alert">
+          <p className={styles.errorText}>{error}</p>
+          <a href={PHONE_HREF} className={styles.errorLink}>
+            تماس تلفنی با کارشناس
+          </a>
+        </div>
+      )}
+
+      <p className={styles.privacy}>
+        اطلاعات شما نزد ما محفوظ بوده و صرفاً جهت مشاوره و هماهنگی خرید استفاده
+        می‌شود.
       </p>
     </form>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={styles.successIcon}
+    >
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
   );
 }

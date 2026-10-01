@@ -1,7 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   Services Gallery — two full-screen stacked sections.
-   Text fades on photo. No box. Glassy rounded buttons.
-   Dots: one big circular active, others small white.
+   Services gallery — two full-screen stacked sections
    ════════════════════════════════════════════════════════════ */
 
 .gallery {
@@ -11,19 +9,18 @@
 .screen {
   position: relative;
   width: 100%;
-  height: 100vh;
-  min-height: 600px;
+  height: 100svh;
+  min-height: 560px;
   overflow: hidden;
   background: var(--color-bg);
 }
 
-/* ── Background images (preloaded, crossfade) ── */
-
+/* ── Background images ── */
 .bg {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 800ms ease;
+  transition: opacity 1000ms var(--ease-out);
 }
 
 .bgActive {
@@ -35,42 +32,49 @@
   object-position: center;
 }
 
-/* ── Dark overlay ── */
-
+/* ── Overlay: readable text over any photo ── */
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(8, 6, 10, 0.55);
   pointer-events: none;
+  background:
+    linear-gradient(
+      to left,
+      rgba(8, 6, 10, 0.92) 0%,
+      rgba(8, 6, 10, 0.7) 45%,
+      rgba(8, 6, 10, 0.3) 75%,
+      rgba(8, 6, 10, 0.15) 100%
+    ),
+    linear-gradient(to top, rgba(8, 6, 10, 0.85) 0%, transparent 50%);
 }
 
-/* ── Content (text fades on photo, no box) ── */
-
+/* ── Content ── */
 .content {
   position: absolute;
   inset: 0;
   z-index: 2;
   display: flex;
   align-items: center;
-  padding: clamp(40px, 6vw, 80px);
+  padding: clamp(var(--space-8), 7vw, var(--space-20));
   pointer-events: none;
 }
 
 .textWrap {
-  max-width: 600px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  animation: textFadeIn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  align-items: flex-start;
+  gap: var(--space-4);
+  max-width: 620px;
+  animation: textFadeIn 900ms var(--ease-out) forwards;
 }
 
 @keyframes textFadeIn {
-  0% {
+  from {
     opacity: 0;
-    transform: translateY(30px);
-    filter: blur(6px);
+    transform: translateY(24px);
+    filter: blur(5px);
   }
-  100% {
+  to {
     opacity: 1;
     transform: translateY(0);
     filter: blur(0);
@@ -78,77 +82,96 @@
 }
 
 .title {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.75rem, 3.6vw, 3rem);
   font-weight: 700;
-  line-height: 1.25;
+  line-height: var(--leading-tight);
   color: #fff;
   margin: 0;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+  text-wrap: balance;
 }
 
 .body {
-  font-size: clamp(1rem, 1.5vw, 1.2rem);
-  font-weight: 400;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  line-height: var(--leading-relaxed);
+  color: rgba(255, 255, 255, 0.88);
   margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  text-wrap: pretty;
 }
 
 .cta {
   align-self: flex-start;
-  font-size: 0.95rem;
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-sm);
   font-weight: 600;
   color: #fff;
   text-decoration: none;
-  padding: 12px 28px;
-  background: rgba(185, 28, 28, 0.25);
+  background: rgba(185, 28, 28, 0.3);
   backdrop-filter: blur(16px) saturate(150%);
   -webkit-backdrop-filter: blur(16px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-pill);
   box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: all var(--transition);
+    0 4px 20px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   pointer-events: auto;
-  margin-top: 8px;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .cta:hover {
-  background: rgba(185, 28, 28, 0.45);
-  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  background: rgba(185, 28, 28, 0.5);
+  border-color: rgba(255, 255, 255, 0.35);
   box-shadow:
-    0 8px 32px rgba(185, 28, 28, 0.35),
-    0 0 20px var(--color-accent-glow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    0 8px 32px rgba(185, 28, 28, 0.4),
+    0 0 24px var(--color-accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
   transform: translateY(-2px);
 }
 
 /* ── Navigation arrows ── */
-
 .navBtn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
-  width: 48px;
-  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
   color: #fff;
   background: rgba(17, 11, 16, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 50%;
   cursor: pointer;
-  transition: all var(--transition);
+  transition:
+    background-color var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition);
 }
 
-.navBtn::after {
-  content: '';
+.navBtn:hover {
+  background: rgba(185, 28, 28, 0.4);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 20px var(--color-accent-glow);
+}
+
+.navPrev { left: var(--space-6); }
+.navNext { right: var(--space-6); }
+
+/* Chevrons drawn with borders — no icon font needed */
+.navIconPrev,
+.navIconNext {
   display: block;
   width: 10px;
   height: 10px;
@@ -156,53 +179,38 @@
   border-bottom: 2px solid #fff;
 }
 
-.navPrev::after {
-  transform: rotate(45deg) translateX(2px);
-}
+.navIconPrev { transform: rotate(45deg) translate(1px, -1px); }
+.navIconNext { transform: rotate(-135deg) translate(1px, -1px); }
 
-.navNext::after {
-  transform: rotate(-45deg) translateX(-2px);
-}
-
-.navBtn:hover {
-  background: rgba(185, 28, 28, 0.3);
-  border-color: var(--color-accent);
-  box-shadow: 0 0 16px var(--color-accent-glow);
-}
-
-.navPrev {
-  left: 24px;
-}
-
-.navNext {
-  right: 24px;
-}
-
-/* ── Dots: sophisticated rounded indicators ── */
-
+/* ── Dots ── */
 .dots {
   position: absolute;
-  bottom: 32px;
+  bottom: var(--space-8);
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .dot {
   padding: 0;
   border: none;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
+  border-radius: 50%;
+  transition:
+    width var(--duration-slow) var(--ease-out),
+    height var(--duration-slow) var(--ease-out),
+    background-color var(--duration-slow) var(--ease-out),
+    box-shadow var(--duration-slow) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .dotActive {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+  position: relative;
+  width: 40px;
+  height: 40px;
   background: var(--color-accent);
   box-shadow:
     0 0 24px var(--color-accent-glow-strong),
@@ -212,22 +220,34 @@
 .dotActive::after {
   content: "";
   position: absolute;
-  inset: 8px;
+  inset: 7px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.4);
 }
 
 .dotIdle {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+  width: 9px;
+  height: 9px;
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
 }
 
 .dotIdle:hover {
-  background: rgba(255, 255, 255, 0.7);
-  transform: scale(1.3);
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(1.35);
+}
+
+/* ── Screen-reader only ── */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -236,61 +256,53 @@
 
 @media (max-width: 768px) {
   .screen {
-    min-height: 500px;
+    height: 88svh;
+    min-height: 480px;
   }
 
   .content {
     align-items: flex-end;
-    padding: 32px 24px;
+    padding: var(--space-8) var(--space-6) var(--space-20);
   }
 
   .textWrap {
-    gap: 12px;
+    gap: var(--space-3);
+    max-width: none;
   }
 
-  .title {
-    font-size: 1.6rem;
-  }
+  .title { font-size: 1.5rem; }
 
   .body {
     font-size: 0.9rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .cta {
-    font-size: 0.85rem;
-    padding: 10px 22px;
-  }
-
-  .dots {
-    bottom: 20px;
-  }
-
-  .dotActive {
-    width: 32px;
-    height: 32px;
-  }
-
-  .dotIdle {
-    width: 6px;
-    height: 6px;
-  }
-
-  .dotActive {
-    width: 36px;
-    height: 36px;
+    padding: var(--space-2) var(--space-5);
+    font-size: var(--text-xs);
   }
 
   .navBtn {
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
+    width: 38px;
+    height: 38px;
   }
 
-  .navPrev {
-    left: 12px;
+  .navPrev { left: var(--space-3); }
+  .navNext { right: var(--space-3); }
+
+  .dots { bottom: var(--space-6); }
+
+  .dotActive {
+    width: 30px;
+    height: 30px;
   }
 
-  .navNext {
-    right: 12px;
+  .dotIdle {
+    width: 7px;
+    height: 7px;
   }
 }

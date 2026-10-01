@@ -1,42 +1,35 @@
 import type { MetadataRoute } from "next";
 import { getVehicles } from "@/lib/vehicles";
-
-function baseUrl() {
-  return process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "https://flodesk.ir";
-}
+import { SITE_URL } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const now = new Date();
   const vehicles = getVehicles();
 
-  const staticPages: MetadataRoute.Sitemap = [
+  return [
     {
-      url: baseUrl(),
-      lastModified: new Date(),
-      changeFrequency: "yearly",
+      url: SITE_URL,
+      lastModified: now,
+      changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${baseUrl()}/trucks`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/trucks`,
+      lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.9,
     },
     {
-      url: `${baseUrl()}/construction`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/construction`,
+      lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.9,
     },
+    ...vehicles.map((v) => ({
+      url: `${SITE_URL}/trucks/${v.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
   ];
-
-  const vehiclePages: MetadataRoute.Sitemap = vehicles.map((v) => ({
-    url: `${baseUrl()}/trucks/${v.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
-  return [...staticPages, ...vehiclePages];
 }

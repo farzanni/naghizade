@@ -1,22 +1,24 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./ServicesGallery.module.css";
 
 /* ════════════════════════════════════════════════════════════
-   TWO FULL-SCREEN SECTIONS — stacked vertically
-   Text fades in on photos. No box. Glassy rounded buttons.
-   Dots: one big circular active, others small white.
-   Auto-slide: advances every 5 seconds.
+   Services gallery — two full-screen stacked sections.
+   Text fades onto the photo (no box). Images preloaded.
+   Dots: one large circular active indicator, small white idle.
+   Auto-advances every 7s; pauses on hover, focus and interaction.
    ════════════════════════════════════════════════════════════ */
 
-const AUTOSLIDE_MS = 5000;
+const AUTOSLIDE_MS = 7000;
+const RESUME_AFTER_MS = 10000;
 
-const sections = [
+const SECTIONS = [
   {
-    id: "group-1",
+    id: "services-import",
+    heading: "خدمات واردات و ترخیص",
     slides: [
       {
         id: "import",
@@ -39,7 +41,8 @@ const sections = [
     ],
   },
   {
-    id: "group-2",
+    id: "services-after-sale",
+    heading: "خدمات پس از خرید",
     slides: [
       {
         id: "delivery",
@@ -67,90 +70,148 @@ const sections = [
       },
     ],
   },
-];
+] as const;
 
-function FullScreenSection({ section }: { section: typeof sections[number] }) {
+function FullScreenSection({
+  section,
+}: {
+  section: (typeof SECTIONS)[number];
+}) {
   const [active, setActive] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const total = section.slides.length;
   const current = section.slides[active];
 
-  const goNext = useCallback(() => {
-    setActive((prev) => (prev < section.slides.length - 1 ? prev + 1 : 0));
-  }, [section.slides.length]);
+  const go = useCallback(
+    (next: number) => setActive(((next % total) + total) % total),
+    [total]
+  );
 
-  const goPrev = useCallback(() => {
-    setActive((prev) => (prev > 0 ? prev - 1 : section.slides.length - 1));
-  }, [section.slides.length]);
+  /** Manual interaction pauses autoplay, then resumes after a delay. */
+  const pauseBriefly = useCallback(() => {
+    setPaused(true);
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => setPaused(false), RESUME_AFTER_MS);
+  }, []);
 
-  // Auto-slide effect
   useEffect(() => {
-    if (isPaused) return;
-    const timer = setInterval(goNext, AUTOSLIDE_MS);
-    return () => clearInterval(timer);
-  }, [goNext, isPaused]);
+    return () => {
+      if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    };
+  }, []);
 
-  // Reset auto-slide timer on manual interaction
-  const handleUserInteraction = (action: () => void) => {
-    action();
-    setIsPaused(true);
-    setTimeout(() => setIsPaused(false), 8000); // resume after 8s idle
+  // Autoplay — skipped while paused or when reduced motion is preferred.
+  useEffect(() => {
+    if (paused) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const timer = setInterval(() => go(active + 1), AUTOSLIDE_MS);
+    return () => clearInterval(timer);
+  }, [go, active, paused]);
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    // RTL: ArrowLeft advances, ArrowRight goes back.
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      pauseBriefly();
+      go(active + 1);
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      pauseBriefly();
+      go(active - 1);
+    }
   };
 
   return (
-    <section className={styles.screen} id={section.id}>
-      {/* ── All images preloaded (crossfade), priority on first ── */}
+    <section
+      className={styles.screen}
+      id={section.id}
+      aria-label={section.heading}
+      onKeyDown={onKeyDown}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+    >
+      {/* Preloaded backgrounds, cross-faded */}
       {section.slides.map((slide, i) => (
         <div
           key={slide.id}
           className={`${styles.bg} ${i === active ? styles.bgActive : ""}`}
+          aria-hidden={i !== active}
         >
           <Image
             src={slide.image}
-            alt={slide.title}
+            alt=""
             fill
-            priority={i === 0}
+            sizes="100vw"
+            priority={section.id === "services-import" && i === 0}
             className={styles.bgImg}
           />
         </div>
       ))}
 
-      {/* ── Dark overlay ── */}
-      <div className={styles.overlay} />
+      <div className={styles.overlay} aria-hidden="true" />
 
-      {/* ── Text content — fades in on photo, no box ── */}
       <div className={styles.content}>
         <div className={styles.textWrap} key={current.id}>
           <h2 className={styles.title}>{current.title}</h2>
           <p className={styles.body}>{current.body}</p>
-          <Link href="#contact" className={styles.cta}>
+          <Link href="/#contact" className={styles.cta}>
             درخواست مشاوره
           </Link>
         </div>
       </div>
 
-      {/* ── Navigation arrows ── */}
       <button
+        type="button"
         className={`${styles.navBtn} ${styles.navPrev}`}
-        onClick={() => handleUserInteraction(goPrev)}
-        aria-label="قبلی"
-      />
-      <button
-        className={`${styles.navBtn} ${styles.navNext}`}
-        onClick={() => handleUserInteraction(goNext)}
-        aria-label="بعدی"
-      />
+        onClick={() => {
+          pauseBriefly();
+          go(active - 1);
+        }}
+        aria-label="اسلاید قبلی"
+      >
+        <span className={styles.navIconPrev} aria-hidden="true" />
+      </button>
 
-      {/* ── Dots: one big circular active, others small white ── */}
-      <div className={styles.dots}>
+      <button
+        type="button"
+        className={`${styles.navBtn} ${styles.navNext}`}
+        onClick={() => {
+          pauseBriefly();
+          go(active + 1);
+        }}
+        aria-label="اسلاید بعدی"
+      >
+        <span className={styles.navIconNext} aria-hidden="true" />
+      </button>
+
+      <div className={styles.dots} role="tablist" aria-label="انتخاب اسلاید">
         {section.slides.map((slide, i) => (
           <button
             key={slide.id}
-            className={`${styles.dot} ${i === active ? styles.dotActive : styles.dotIdle}`}
-            aria-label={`اسلاید ${i + 1}`}
-            onClick={() => handleUserInteraction(() => setActive(i))}
+            type="button"
+            role="tab"
+            aria-selected={i === active}
+            aria-label={slide.title}
+            className={`${styles.dot} ${
+              i === active ? styles.dotActive : styles.dotIdle
+            }`}
+            onClick={() => {
+              pauseBriefly();
+              go(i);
+            }}
           />
         ))}
       </div>
+
+      {/* Announce slide changes to screen readers */}
+      <p className={styles.srOnly} aria-live="polite">
+        {`اسلاید ${active + 1} از ${total}: ${current.title}`}
+      </p>
     </section>
   );
 }
@@ -158,7 +219,7 @@ function FullScreenSection({ section }: { section: typeof sections[number] }) {
 export default function ServicesGallery() {
   return (
     <div className={styles.gallery}>
-      {sections.map((section) => (
+      {SECTIONS.map((section) => (
         <FullScreenSection key={section.id} section={section} />
       ))}
     </div>
