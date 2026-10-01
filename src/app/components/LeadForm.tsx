@@ -69,7 +69,7 @@ export default function LeadForm() {
   }
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit} noValidate={false}>
+    <form className={styles.form} onSubmit={handleSubmit}>
       <input
         type="hidden"
         name="_subject"

@@ -112,9 +112,7 @@ export default function Hero({ inventoryHref }: { inventoryHref: string }) {
       <HeroBackground />
       <div className={styles.overlay} aria-hidden="true" />
       <div className={styles.glow} aria-hidden="true" />
-      <div id="hero-brand-wrap">
-        <HeroBrand />
-      </div>
+      <HeroBrand />
       <HeroPanel inventoryHref={inventoryHref} />
       <div className={styles.accentRight} aria-hidden="true" />
       <div className={styles.accentLeft} aria-hidden="true" />

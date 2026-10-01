@@ -1,4 +1,4 @@
-import { getVehicles, getVehiclesByGroup } from "@/lib/vehicles";
+import { getVehiclesByGroup, getGroupCounts } from "@/lib/vehicles";
 import ListingPage from "../components/ListingPage/ListingPage";
 
 export const metadata = {
@@ -9,20 +9,19 @@ export const metadata = {
 };
 
 export default function TrucksPage() {
-  const trucks = getVehiclesByGroup("trucks");
-  const machinery = getVehiclesByGroup("machinery");
+  const counts = getGroupCounts();
 
   return (
     <ListingPage
       eyebrow="دسته‌بندی محصولات"
       title="انواع کامیون، کشنده و کامیونت"
       lead="مجموعه‌ای از برترین کشنده‌ها، کامیون‌های باری و کمپرسی و کامیونت‌های کارشناسی‌شده آماده تحویل."
-      vehicles={trucks}
+      vehicles={getVehiclesByGroup("trucks")}
       countLabel={(n) => `${n} مورد موجود`}
       fallback={{
         href: "/construction",
         label: "مشاهده ماشین‌آلات راه‌سازی و معدنی",
-        count: machinery.length,
+        count: counts.machinery,
       }}
     />
   );

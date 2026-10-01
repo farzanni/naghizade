@@ -96,6 +96,15 @@ function FullScreenSection({
     resumeTimer.current = setTimeout(() => setPaused(false), RESUME_AFTER_MS);
   }, []);
 
+  /** Step one slide, pausing autoplay so the user's choice sticks. */
+  const step = useCallback(
+    (delta: number) => {
+      pauseBriefly();
+      go(active + delta);
+    },
+    [pauseBriefly, go, active]
+  );
+
   useEffect(() => {
     return () => {
       if (resumeTimer.current) clearTimeout(resumeTimer.current);
@@ -115,12 +124,10 @@ function FullScreenSection({
     // RTL: ArrowLeft advances, ArrowRight goes back.
     if (e.key === "ArrowLeft") {
       e.preventDefault();
-      pauseBriefly();
-      go(active + 1);
+      step(1);
     } else if (e.key === "ArrowRight") {
       e.preventDefault();
-      pauseBriefly();
-      go(active - 1);
+      step(-1);
     }
   };
 
@@ -168,10 +175,7 @@ function FullScreenSection({
       <button
         type="button"
         className={`${styles.navBtn} ${styles.navPrev}`}
-        onClick={() => {
-          pauseBriefly();
-          go(active - 1);
-        }}
+        onClick={() => step(-1)}
         aria-label="اسلاید قبلی"
       >
         <span className={styles.navIconPrev} aria-hidden="true" />
@@ -180,10 +184,7 @@ function FullScreenSection({
       <button
         type="button"
         className={`${styles.navBtn} ${styles.navNext}`}
-        onClick={() => {
-          pauseBriefly();
-          go(active + 1);
-        }}
+        onClick={() => step(1)}
         aria-label="اسلاید بعدی"
       >
         <span className={styles.navIconNext} aria-hidden="true" />

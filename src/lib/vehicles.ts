@@ -67,7 +67,7 @@ const vehiclesDir = join(process.cwd(), "content", "vehicles");
 
 function parseVehicle(raw: string): Vehicle | null {
   try {
-    const data = JSON.parse(raw) as Partial<Vehicle> & { category?: string };
+    const data = JSON.parse(raw) as Partial<Vehicle>;
     if (!data.slug || !data.name) return null;
 
     const images = Array.isArray(data.images) ? data.images.filter(Boolean) : [];
@@ -80,7 +80,7 @@ function parseVehicle(raw: string): Vehicle | null {
       group: groupForCategory(data.category ?? ""),
       price: data.price ?? "",
       image: primaryImage,
-      // Ensure the primary image is always first and never duplicated.
+      // Fall back to the primary image so a gallery always has something.
       images: images.length ? images : primaryImage ? [primaryImage] : [],
       videos: Array.isArray(data.videos) ? data.videos.filter(Boolean) : [],
       shortDescription: data.shortDescription ?? "",
@@ -93,30 +93,43 @@ function parseVehicle(raw: string): Vehicle | null {
   }
 }
 
-/** All vehicles, available first, then by name. */
+/** All vehicles, available first, then by name.
+ *
+ *  Cached for the process lifetime: content is static, and every caller
+ *  (both listing pages, every detail page, the sitemap) would otherwise
+ *  re-read and re-parse every JSON file. */
+let allVehicles: Vehicle[] | null = null;
+
 export function getVehicles(): Vehicle[] {
+  if (allVehicles) return allVehicles;
   if (!existsSync(vehiclesDir)) return [];
 
   const files = readdirSync(vehiclesDir).filter((f) => f.endsWith(".json"));
 
-  return files
+  allVehicles = files
     .map((f) => parseVehicle(readFileSync(join(vehiclesDir, f), "utf-8")))
     .filter((v): v is Vehicle => v !== null)
     .sort((a, b) => {
       if (a.available !== b.available) return a.available ? -1 : 1;
       return a.name.localeCompare(b.name, "fa");
     });
+
+  return allVehicles;
 }
 
+/** Look up by slug. Goes through getVehicles so a slug can never
+ *  escape the content directory via path traversal. */
 export function getVehicle(slug: string): Vehicle | null {
-  try {
-    const raw = readFileSync(join(vehiclesDir, `${slug}.json`), "utf-8");
-    return parseVehicle(raw);
-  } catch {
-    return null;
-  }
+  return getVehicles().find((v) => v.slug === slug) ?? null;
 }
 
 export function getVehiclesByGroup(group: VehicleGroup): Vehicle[] {
   return getVehicles().filter((v) => v.group === group);
+}
+
+/** How many vehicles are in each group — for cross-links between listings. */
+export function getGroupCounts(): Record<VehicleGroup, number> {
+  const counts: Record<VehicleGroup, number> = { trucks: 0, machinery: 0 };
+  for (const v of getVehicles()) counts[v.group] += 1;
+  return counts;
 }
