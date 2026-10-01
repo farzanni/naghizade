@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { PHONE_TEL } from "@/lib/site";
 import styles from "./LeadForm.module.css";
 
 type Status = "idle" | "submitting" | "success" | "error";
@@ -13,8 +14,6 @@ type Status = "idle" | "submitting" | "success" | "error";
  * to the phone number instead of silently dropping the lead.
  */
 const ENDPOINT = process.env.NEXT_PUBLIC_LEAD_ENDPOINT ?? "";
-
-const PHONE_HREF = "tel:+989123456789";
 
 export default function LeadForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -131,7 +130,7 @@ export default function LeadForm() {
       {status === "error" && (
         <div className={styles.error} role="alert">
           <p className={styles.errorText}>{error}</p>
-          <a href={PHONE_HREF} className={styles.errorLink}>
+          <a href={PHONE_TEL} className={styles.errorLink}>
             تماس تلفنی با کارشناس
           </a>
         </div>

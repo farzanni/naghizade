@@ -58,21 +58,9 @@ const CATEGORY_GROUPS: Record<string, VehicleGroup> = {
   "ماشین‌آلات معدنی": "machinery",
 };
 
-export const GROUP_LABELS: Record<VehicleGroup, string> = {
-  trucks: "کامیون و کشنده",
-  machinery: "ماشین‌آلات راه‌سازی و معدنی",
-};
-
 function groupForCategory(category: string): VehicleGroup {
   const key = (category || "").trim();
   return CATEGORY_GROUPS[key] ?? "machinery";
-}
-
-/** Normalize Persian/Arabic digits so sorting and display stay consistent. */
-function normalizeDigits(value: string): string {
-  return value
-    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
-    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
 }
 
 const vehiclesDir = join(process.cwd(), "content", "vehicles");
@@ -132,14 +120,3 @@ export function getVehicle(slug: string): Vehicle | null {
 export function getVehiclesByGroup(group: VehicleGroup): Vehicle[] {
   return getVehicles().filter((v) => v.group === group);
 }
-
-/** Distinct categories present in a set of vehicles, in stable order. */
-export function getCategories(vehicles: Vehicle[]): string[] {
-  const seen = new Set<string>();
-  for (const v of vehicles) {
-    if (v.category) seen.add(v.category);
-  }
-  return [...seen];
-}
-
-export { normalizeDigits };

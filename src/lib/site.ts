@@ -2,8 +2,12 @@
    Site-wide business constants.
 
    Everything a non-developer might need to change lives here:
-   phone number, email, address, social links. Components read
-   from this file so nothing is hard-coded in the markup.
+   phone number, email, hours. Components read from this file so
+   nothing is hard-coded in the markup.
+
+   Before sharing the site publicly, replace `phone` / `phoneHref`
+   with the real business number. `phone` is Persian digits for
+   display; `phoneHref` must be ASCII digits for tel: links.
    ════════════════════════════════════════════════════════════ */
 
 export const SITE_URL = "https://naghizade.vercel.app";
@@ -13,12 +17,6 @@ export const BUSINESS = {
   shortName: "نقی‌زاده",
   tagline: "مرجع تخصصی خودروهای سنگین و کشنده",
 
-  /**
-   * Contact details.
-   * NOTE: replace `phone` / `phoneHref` with the real business number
-   * before sharing the site publicly. Digits are Persian for display,
-   * phoneHref must be plain ASCII digits for tel: links to work.
-   */
   phone: "۰۹۱۲۳۴۵۶۷۸۹",
   phoneHref: "+989123456789",
   email: "info@naghizade.ir",
@@ -27,10 +25,8 @@ export const BUSINESS = {
   hours: "شنبه تا پنجشنبه، ۹ تا ۱۸",
 } as const;
 
-/** Convert Persian digits to ASCII so they work in tel:/wa.me links. */
-export function toAsciiDigits(value: string): string {
-  return value.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-}
+/** tel: URL for the business phone — one source, used everywhere. */
+export const PHONE_TEL = `tel:${BUSINESS.phoneHref}`;
 
 export const NAV_LINKS = [
   { label: "خانه", href: "/" },

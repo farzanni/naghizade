@@ -1,5 +1,5 @@
 /* ============================================================
-   Listing pages (trucks / construction)
+   Listing page shell (trucks / construction)
    ============================================================ */
 
 .page {
@@ -33,6 +33,12 @@
   background: var(--color-accent-tint);
   border: 1px solid var(--color-accent-line);
   border-radius: var(--radius-pill);
+}
+
+.fallback {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-8);
 }
 
 @media (max-width: 768px) {
