@@ -7,15 +7,30 @@ import styles from "./ServicesGallery.module.css";
 
 /* ════════════════════════════════════════════════════════════
    Services gallery — two full-screen stacked sections.
-   Text fades onto the photo (no box). Images preloaded.
-   Dots: one large circular active indicator, small white idle.
-   Auto-advances every 7s; pauses on hover, focus and interaction.
-   RTL: "next" points left, "previous" points right.
-   Swipe: touch left/right on mobile.
+
+   Design intent: the photograph is the hero. Text sits on a soft
+   directional shadow rather than a blanket of black, so the image
+   breathes. Crimson is used sparingly — a kicker, a hairline rule,
+   the active dot — never as fill.
+
+   Motion: the active image settles slowly from a slight zoom, text
+   rises in a staggered sequence, and a hairline progress bar marks
+   the autoplay interval. Nothing bounces.
    ════════════════════════════════════════════════════════════ */
 
 const AUTOSLIDE_MS = 7000;
 const RESUME_AFTER_MS = 12000;
+
+/** Persian digits, for the slide counter. */
+const FA_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
+const toFa = (n: number) =>
+  String(n)
+    .split("")
+    .map((d) => FA_DIGITS[Number(d)] ?? d)
+    .join("");
+
+/** Minimum horizontal travel (px) for a touch to count as a swipe. */
+const SWIPE_THRESHOLD = 48;
 
 const SECTIONS = [
   {
@@ -24,20 +39,23 @@ const SECTIONS = [
     slides: [
       {
         id: "import",
-        title: "واردات تخصصی کشنده و ماشین‌آلات سنگین",
-        body: "واردات مستقیم انواع کامیون، کشنده‌های اروپایی و چینی و ماشین‌آلات راه‌سازی بدون واسطه، همراه با کارشناسی فنی و ضمانت اصالت.",
+        kicker: "واردات مستقیم",
+        title: "واردات تخصصی ماشین‌آلات راه‌سازی و معدنی",
+        body: "واردات مستقیم انواع بیل مکانیکی، لودر، بلدوزر و تجهیزات سنگین راه‌سازی و معدنی بدون واسطه، با کارشناسی فنی و ضمانت اصالت قطعات.",
         image: "/images/services/service-import.jpg",
       },
       {
         id: "customs",
-        title: "ترخیص تخصصی از گمرکات کشور",
-        body: "انجام کلیه تشریفات گمرکی، ثبت سفارش و ترخیص قطعی خودروهای سنگین و ماشین‌آلات راه‌سازی در کوتاه‌ترین زمان.",
+        kicker: "ترخیص گمرکی",
+        title: "ترخیص تخصصی ماشین‌آلات از گمرکات کشور",
+        body: "انجام کلیه تشریفات گمرکی، ثبت سفارش در سامانه جامع تجارت و ترخیص قطعی ماشین‌آلات سنگین، راه‌سازی و معدنی در کوتاه‌ترین زمان.",
         image: "/images/services/service-customs.jpg",
       },
       {
         id: "plates",
-        title: "واردات با پلاک ملی و گذر موقت",
-        body: "امکان ثبت سفارش و واردات انواع کشنده و خودروهای سنگین به صورت پلاک ملی آماده کار یا گذر موقت.",
+        kicker: "مجوزهای رسمی",
+        title: "واردات با مجوزهای رسمی و قانونی",
+        body: "امکان ثبت سفارش و ترخیص انواع ماشین‌آلات راه‌سازی و معدنی با رعایت کلیه ضوابط قانونی و مجوزهای بهره‌برداری کارگاهی.",
         image: "/images/services/service-plates.jpg",
       },
     ],
@@ -48,34 +66,35 @@ const SECTIONS = [
     slides: [
       {
         id: "delivery",
-        title: "تحویل سریع و تضمینی در سراسر کشور",
-        body: "حمل ایمن و تحویل کلید‌به‌کلید انواع خودروهای سنگین و ماشین‌آلات راه‌سازی از گمرک تا محل پروژه شما.",
+        kicker: "تحویل سراسر کشور",
+        title: "حمل و تحویل کلید‌به‌کلید در محل پروژه و معدن",
+        body: "بارگیری ایمن با تریلی‌های مخصوص کمرشکن و تحویل مستقیم ماشین‌آلات در محل کارگاه، پروژه عمرانی یا معدن شما در سراسر ایران.",
         image: "/images/services/service-delivery.jpg",
       },
       {
         id: "permits",
-        title: "اخذ کلیه مجوزهای قانونی و شماره‌گذاری",
-        body: "انجام صفر تا صد مراحل اداری، تاییدیه استاندارد و اخذ پلاک ملی بدون نیاز به دوندگی.",
+        kicker: "استاندارد و صمت",
+        title: "اخذ کلیه مجوزهای قانونی و تاییدیه استاندارد",
+        body: "انجام کامل مراحل اداری، تاییدیه بازرسی استاندارد و مجوزهای وزارت صمت بدون نیاز به دوندگی مشتریان.",
         image: "/images/services/service-permits.jpg",
       },
       {
         id: "secondhand",
-        title: "خرید و فروش خودروهای کارکرده و در حد نو",
-        body: "ارائه انواع کامیون، کشنده و ماشین‌آلات کارکرده با کارشناسی دقیق رنگ، فنی و شاسی.",
+        kicker: "کارکرده و صفر",
+        title: "خرید و فروش ماشین‌آلات کارکرده و صفر",
+        body: "ارائه انواع بیل مکانیکی، لودر و تجهیزات معدنی کارکرده با کارشناسی دقیق سیستم هیدرولیک، موتور، زیربندی و شاسی.",
         image: "/images/services/service-secondhand.jpg",
       },
       {
         id: "consultation",
-        title: "مشاوره تخصصی خرید و استعلام قیمت",
-        body: "مشاوره تخصصی جهت انتخاب بهترین کشنده یا ماشین‌آلات راه‌سازی متناسب با نوع کاربری و بودجه شما.",
+        kicker: "مشاوره تخصصی",
+        title: "مشاوره تخصصی خرید ماشین‌آلات و استعلام قیمت",
+        body: "مشاوره فنی کارشناسان ما جهت انتخاب مناسب‌ترین تناژ و مدل ماشین‌آلات راه‌سازی و معدنی متناسب با شرایط پروژه و بودجه شما.",
         image: "/images/services/service-consult.jpg",
       },
     ],
   },
 ] as const;
-
-/** Minimum horizontal travel (px) for a touch to count as a swipe. */
-const SWIPE_THRESHOLD = 48;
 
 function FullScreenSection({
   section,
@@ -87,6 +106,17 @@ function FullScreenSection({
   const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+
+  /* Entrance animations are CSS-driven, but a backgrounded or
+     throttled tab never advances the animation clock — which would
+     leave the copy invisible forever. Reveal the text from JS once
+     the entrance window has passed, so content can never be hidden
+     by an animation that never runs. */
+  const [entered, setEntered] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setEntered(true), 1100);
+    return () => clearTimeout(t);
+  }, []);
 
   const total = section.slides.length;
   const current = section.slides[active];
@@ -171,7 +201,7 @@ function FullScreenSection({
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      {/* Preloaded backgrounds, cross-faded */}
+      {/* Preloaded backgrounds, cross-faded, slow settle on the active one */}
       {section.slides.map((slide, i) => (
         <div
           key={slide.id}
@@ -189,13 +219,35 @@ function FullScreenSection({
         </div>
       ))}
 
+      {/* Directional shadow — deep only where the text sits, so the
+          photograph reads. Plus a soft vignette and a bottom ramp for
+          the progress bar. */}
       <div className={styles.overlay} aria-hidden="true" />
+      <div className={styles.vignette} aria-hidden="true" />
 
       <div className={styles.content}>
         <div className={styles.textWrap} key={current.id}>
-          <h2 className={styles.title}>{current.title}</h2>
-          <p className={styles.body}>{current.body}</p>
-          <Link href="/#contact" className={styles.cta}>
+          <p className={`${styles.kicker} ${entered ? "" : styles.anim}`}>
+            <span className={styles.kickerDash} aria-hidden="true" />
+            {current.kicker}
+          </p>
+
+          <span
+            className={`${styles.rule} ${entered ? "" : styles.anim}`}
+            aria-hidden="true"
+          />
+
+          <h2 className={`${styles.title} ${entered ? "" : styles.anim}`}>
+            {current.title}
+          </h2>
+          <p className={`${styles.body} ${entered ? "" : styles.anim}`}>
+            {current.body}
+          </p>
+
+          <Link
+            href="/#contact"
+            className={`${styles.cta} ${entered ? "" : styles.anim}`}
+          >
             درخواست مشاوره
           </Link>
         </div>
@@ -220,7 +272,7 @@ function FullScreenSection({
         <span className={styles.navIconPrev} aria-hidden="true" />
       </button>
 
-      {/* ── Dots: current slide highlighted, tappable, with progress bar ── */}
+      {/* ── Dots: current highlighted, tappable ── */}
       <div className={styles.dots} role="tablist" aria-label="انتخاب اسلاید">
         {section.slides.map((slide, i) => (
           <button
@@ -240,7 +292,14 @@ function FullScreenSection({
         ))}
       </div>
 
-      {/* ── Progress bar: fills over the autoplay interval ── */}
+      {/* ── Slide counter ── */}
+      <p className={styles.counter} aria-hidden="true">
+        <span className={styles.counterActive}>{toFa(active + 1)}</span>
+        <span className={styles.counterSep}>／</span>
+        <span>{toFa(total)}</span>
+      </p>
+
+      {/* ── Progress bar: fills over one autoplay interval ── */}
       {!paused && (
         <div
           className={styles.progressTrack}
@@ -253,7 +312,7 @@ function FullScreenSection({
 
       {/* Announce slide changes to screen readers */}
       <p className={styles.srOnly} aria-live="polite">
-        {`اسلاید ${active + 1} از ${total}: ${current.title}`}
+        {`اسلاید ${toFa(active + 1)} از ${toFa(total)}: ${current.title}`}
       </p>
     </section>
   );

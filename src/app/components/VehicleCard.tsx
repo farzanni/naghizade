@@ -16,7 +16,7 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   return (
     <article className={styles.card}>
       <Link
-        href={`/trucks/${vehicle.slug}`}
+        href={`/machinery/${vehicle.slug}`}
         className={styles.link}
         aria-label={`${vehicle.name} — مشاهده مشخصات`}
       >

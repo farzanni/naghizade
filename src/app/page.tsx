@@ -10,12 +10,8 @@ import styles from "./Home.module.css";
 
 export default function HomePage() {
   const vehicles = getVehicles();
-  const featured = vehicles.slice(0, 3);
-
-  /* Point the primary CTA at a listing that actually has stock, so a
-     visitor never lands on an empty page. */
-  const hasTrucks = vehicles.some((v) => v.group === "trucks");
-  const inventoryHref = hasTrucks ? "/trucks" : "/construction";
+  const featured = vehicles.slice(0, 4);
+  const inventoryHref = "/machinery";
 
   return (
     <>
@@ -31,11 +27,11 @@ export default function HomePage() {
           <header className={styles.head}>
             <p className="eyebrow">موجودی انبار</p>
             <h2 id="featured-heading" className={styles.title}>
-              ناوگان منتخب خودروهای سنگین و ماشین‌آلات
+              ماشین‌آلات منتخب راه‌سازی و معدنی
             </h2>
             <p className={styles.lead}>
-              خرید، فروش و ثبت سفارش انواع کامیون، کشنده و ماشین‌آلات راه‌سازی با
-              ضمانت سلامت و خدمات تخصصی.
+              خرید، فروش و ثبت سفارش انواع بیل مکانیکی، لودر و ماشین‌آلات راه‌سازی و معدنی با
+              ضمانت سلامت و کارشناسی فنی تخصصی.
             </p>
           </header>
 
@@ -44,7 +40,7 @@ export default function HomePage() {
           {featured.length > 0 && (
             <div className={styles.moreWrap}>
               <Link href={inventoryHref} className="btn btnGhost">
-                مشاهده همه خودروها و ماشین‌آلات
+                مشاهده کاتالوگ ماشین‌آلات
               </Link>
             </div>
           )}

@@ -22,9 +22,9 @@ export async function generateMetadata({
   return {
     title: vehicle.name,
     description: vehicle.shortDescription || vehicle.description,
-    alternates: { canonical: `/trucks/${vehicle.slug}` },
+    alternates: { canonical: `/machinery/${vehicle.slug}` },
     openGraph: {
-      title: vehicle.name,
+      title: `${vehicle.name} | ${BUSINESS.name}`,
       description: vehicle.shortDescription || vehicle.description,
       images: vehicle.image ? [{ url: vehicle.image }] : undefined,
     },
@@ -43,9 +43,8 @@ export default async function VehicleDetailPage({
 
   const specs = Object.entries(vehicle.specifications);
 
-  /* JSON-LD: only emit an Offer when there is a real price.
-     An empty `price` is invalid and gets the whole block rejected. */
-  const jsonLd: Record<string, unknown> = {
+  /* JSON-LD: Product & BreadcrumbList schemas */
+  const productJsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: vehicle.name,
@@ -69,22 +68,50 @@ export default async function VehicleDetailPage({
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       priceCurrency: "IRR",
-      url: `${SITE_URL}/trucks/${vehicle.slug}`,
+      url: `${SITE_URL}/machinery/${vehicle.slug}`,
       seller: {
         "@type": "Organization",
         name: BUSINESS.name,
         telephone: BUSINESS.phoneHref,
       },
-      // Price on request — omit `price` entirely rather than sending "".
       ...(vehicle.price.trim() && { price: vehicle.price.trim() }),
     },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "خانه",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "کاتالوگ ماشین‌آلات",
+        item: `${SITE_URL}/machinery`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: vehicle.name,
+        item: `${SITE_URL}/machinery/${vehicle.slug}`,
+      },
+    ],
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <article className={`section ${styles.page}`}>
@@ -92,7 +119,7 @@ export default async function VehicleDetailPage({
           <nav className={styles.breadcrumb} aria-label="مسیر صفحه">
             <Link href="/">خانه</Link>
             <span aria-hidden="true">/</span>
-            <Link href="/trucks">خودروهای سنگین</Link>
+            <Link href="/machinery">کاتالوگ ماشین‌آلات</Link>
             <span aria-hidden="true">/</span>
             <span aria-current="page">{vehicle.name}</span>
           </nav>

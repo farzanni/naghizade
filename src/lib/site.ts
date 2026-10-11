@@ -15,7 +15,7 @@ export const SITE_URL = "https://naghizade.vercel.app";
 export const BUSINESS = {
   name: "بازرگانی نقی‌زاده",
   shortName: "نقی‌زاده",
-  tagline: "مرجع تخصصی خودروهای سنگین و کشنده",
+  tagline: "مرجع تخصصی واردات، خرید و فروش ماشین‌آلات راه‌سازی، معدنی و ساختمانی",
 
   phone: "۰۹۱۲۳۴۵۶۷۸۹",
   phoneHref: "+989123456789",
@@ -30,7 +30,6 @@ export const PHONE_TEL = `tel:${BUSINESS.phoneHref}`;
 
 export const NAV_LINKS = [
   { label: "خانه", href: "/" },
-  { label: "کامیون و کشنده", href: "/trucks" },
-  { label: "ماشین‌آلات راه‌سازی", href: "/construction" },
+  { label: "کاتالوگ ماشین‌آلات", href: "/machinery" },
   { label: "تماس و مشاوره", href: "/#contact" },
 ] as const;

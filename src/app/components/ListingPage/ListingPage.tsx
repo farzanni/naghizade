@@ -4,11 +4,7 @@ import type { Vehicle } from "@/lib/vehicles";
 import styles from "./ListingPage.module.css";
 
 /* ════════════════════════════════════════════════════════════
-   Shared shell for the two listing pages.
-
-   /trucks and /construction render the same structure with
-   different content, so the layout lives here once instead of
-   being duplicated per route.
+   Shared shell for machinery listing.
    ════════════════════════════════════════════════════════════ */
 
 export default function ListingPage({
@@ -25,7 +21,7 @@ export default function ListingPage({
   vehicles: Vehicle[];
   countLabel: (n: number) => string;
   /** Where to send a visitor when this listing has no stock. */
-  fallback: { href: string; label: string; count: number };
+  fallback?: { href: string; label: string; count: number };
 }) {
   return (
     <section className={`section ${styles.page}`}>
@@ -42,10 +38,17 @@ export default function ListingPage({
         <VehicleGrid vehicles={vehicles} />
 
         {/* A visitor who lands on an empty listing needs a way out. */}
-        {vehicles.length === 0 && fallback.count > 0 && (
+        {vehicles.length === 0 && fallback && fallback.count > 0 && (
           <div className={styles.fallback}>
             <Link href={fallback.href} className="btn btnGhost">
               {fallback.label}
+            </Link>
+          </div>
+        )}
+        {vehicles.length === 0 && !fallback && (
+          <div className={styles.fallback}>
+            <Link href="/#contact" className="btn btnGhost">
+              ثبت سفارش و استعلام موجودی
             </Link>
           </div>
         )}

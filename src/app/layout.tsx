@@ -6,24 +6,28 @@ import Footer from "./components/Footer";
 const SITE_URL = "https://naghizade.vercel.app";
 const SITE_NAME = "بازرگانی نقی‌زاده";
 const SITE_DESC =
-  "مرجع تخصصی خرید، فروش، واردات و ترخیص انواع خودروهای سنگین، کشنده‌های اروپایی و چینی، و ماشین‌آلات راه‌سازی و معدنی با ضمانت سلامت و کارشناسی فنی.";
+  "مرجع تخصصی خرید، فروش، واردات و ترخیص انواع ماشین‌آلات راه‌سازی، معدنی و ساختمانی، بیل مکانیکی کوماتسو و کوبلکو، لودر و تجهیزات سنگین با ضمانت اصالت و کارشناسی فنی.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | مرجع تخصصی خودروهای سنگین و کشنده`,
+    default: `${SITE_NAME} | مرجع تخصصی ماشین‌آلات راه‌سازی و معدنی`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESC,
   applicationName: SITE_NAME,
   keywords: [
-    "خودروهای سنگین",
-    "کشنده",
-    "کامیون",
-    "بیل مکانیکی",
     "ماشین‌آلات راه‌سازی",
-    "واردات خودرو سنگین",
-    "ترخیص خودرو سنگین",
+    "ماشین‌آلات معدنی",
+    "ماشین‌آلات ساختمانی",
+    "بیل مکانیکی",
+    "بیل مکانیکی کوماتسو",
+    "بیل مکانیکی کوبلکو",
+    "لودر",
+    "بلدوزر",
+    "ماشین‌آلات سنگین",
+    "واردات ماشین‌آلات راه‌سازی",
+    "ترخیص ماشین‌آلات معدنی",
     "بازرگانی نقی‌زاده",
   ],
   authors: [{ name: SITE_NAME }],
@@ -36,7 +40,7 @@ export const metadata: Metadata = {
     locale: "fa_IR",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} | مرجع تخصصی خودروهای سنگین و کشنده`,
+    title: `${SITE_NAME} | مرجع تخصصی ماشین‌آلات راه‌سازی و معدنی`,
     description: SITE_DESC,
     images: [
       {
@@ -49,7 +53,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} | مرجع تخصصی خودروهای سنگین و کشنده`,
+    title: `${SITE_NAME} | مرجع تخصصی ماشین‌آلات راه‌سازی و معدنی`,
     description: SITE_DESC,
     images: ["/images/assets/hero-logistics-1280.jpg"],
   },
@@ -77,6 +81,31 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AutoDealer",
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: `${SITE_URL}/favicon.ico`,
+  description: SITE_DESC,
+  telephone: "+989123456789",
+  address: {
+    "@type": "PostalAddress",
+    addressCountry: "IR",
+    addressLocality: "تهران",
+  },
+  knowsAbout: [
+    "ماشین‌آلات راه‌سازی",
+    "ماشین‌آلات معدنی",
+    "بیل مکانیکی کوماتسو",
+    "بیل مکانیکی کوبلکو",
+    "لودر",
+    "بلدوزر",
+    "واردات ماشین‌آلات سنگین",
+    "ترخیص گمرکی ماشین‌آلات",
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -94,6 +123,10 @@ export default function RootLayout({
         <link
           href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap"
           rel="stylesheet"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
       </head>
       <body>

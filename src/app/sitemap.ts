@@ -14,22 +14,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${SITE_URL}/trucks`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${SITE_URL}/construction`,
+      url: `${SITE_URL}/machinery`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     ...vehicles.map((v) => ({
-      url: `${SITE_URL}/trucks/${v.slug}`,
+      url: `${SITE_URL}/machinery/${v.slug}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
-      priority: 0.7,
+      priority: 0.8,
     })),
   ];
 }

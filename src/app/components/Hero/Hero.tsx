@@ -77,8 +77,8 @@ function HeroPanel({ inventoryHref }: { inventoryHref: string }) {
     <div className={styles.panel}>
       <div className={styles.panelInner}>
         <p className={styles.subtitle}>
-          واردات و عرضه تخصصی انواع کشنده، کامیون و ماشین‌آلات راه‌سازی با
-          قطعات یدکی اصلی
+          واردات مستقیم و عرضه تخصصی انواع بیل مکانیکی، ماشین‌آلات راه‌سازی و تجهیزات معدنی با
+          ضمانت سلامت و کارشناسی فنی
         </p>
 
         <div className={styles.ctaRow}>
@@ -86,7 +86,7 @@ function HeroPanel({ inventoryHref }: { inventoryHref: string }) {
             href={inventoryHref}
             className={`${styles.btn} ${styles.btnPrimary}`}
           >
-            مشاهده کشنده‌ها و کامیون‌ها
+            مشاهده کاتالوگ ماشین‌آلات
           </Link>
           <Link
             href="/#contact"
@@ -97,9 +97,9 @@ function HeroPanel({ inventoryHref }: { inventoryHref: string }) {
         </div>
 
         <ul className={styles.trustLine}>
-          <li>واردات مستقیم و بدون واسطه</li>
-          <li>ضمانت سلامت و اصالت</li>
-          <li>پشتیبانی تخصصی</li>
+          <li>واردات مستقیم بدون واسطه</li>
+          <li>کارشناسی فنی و تضمین سلامت</li>
+          <li>ترخیص و تحویل در محل پروژه</li>
         </ul>
       </div>
     </div>
