@@ -23,7 +23,8 @@ export const BUSINESS = {
 
   // TODO: replace with the full China address once provided.
   address: "چین",
-  hours: "شنبه تا پنجشنبه، ۹ تا ۱۸",
+  // TODO: confirm — set to China's Mon–Fri week.
+  hours: "شنبه تا چهارشنبه، ۹ تا ۱۸",
 } as const;
 
 /** tel: URL for the business phone — one source, used everywhere. */

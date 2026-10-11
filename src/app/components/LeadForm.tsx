@@ -13,7 +13,9 @@ type Status = "idle" | "submitting" | "success" | "error";
  * form validates input and shows an honest fallback that routes the visitor
  * to the phone number instead of silently dropping the lead.
  */
-const ENDPOINT = process.env.NEXT_PUBLIC_LEAD_ENDPOINT ?? "";
+// A Formspree endpoint is submitted from the browser, so it is public
+// by design and safe to ship in the bundle. Env var allows overriding.
+const ENDPOINT = process.env.NEXT_PUBLIC_LEAD_ENDPOINT ?? "https://formspree.io/f/mgaoznyb";
 
 export default function LeadForm() {
   const [status, setStatus] = useState<Status>("idle");
