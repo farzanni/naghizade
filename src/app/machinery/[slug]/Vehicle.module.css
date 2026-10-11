@@ -3,7 +3,31 @@
    ============================================================ */
 
 .page {
-  padding-top: var(--space-8);
+  position: relative;
+  padding-top: var(--space-12);
+  background:
+    radial-gradient(
+      100% 40% at 90% -6%,
+      rgba(185, 28, 28, 0.04),
+      transparent 60%
+    ),
+    var(--color-bg);
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-accent-line),
+    transparent
+  );
+  pointer-events: none;
 }
 
 /* ── Breadcrumb ── */
@@ -78,10 +102,22 @@
 }
 
 .blockTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   font-size: var(--text-2xl);
   margin: 0;
   padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--color-border);
+}
+
+.blockTitle::before {
+  content: "";
+  width: 22px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--color-accent), transparent);
+  flex-shrink: 0;
 }
 
 /* ── Specs ── */
@@ -93,14 +129,39 @@
 }
 
 .spec {
-  padding: var(--space-4);
+  position: relative;
+  padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 3px);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  transition: border-color var(--transition);
+  transition:
+    border-color var(--transition),
+    background-color var(--transition),
+    transform var(--duration-fast) var(--ease-out);
 }
 
-.spec:hover { border-color: var(--color-border-strong); }
+.spec::before {
+  content: "";
+  position: absolute;
+  top: var(--space-4);
+  bottom: var(--space-4);
+  right: 0;
+  width: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-line);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.spec:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-2);
+  transform: translateY(-2px);
+}
+
+.spec:hover::before {
+  opacity: 1;
+}
 
 .specKey {
   font-size: var(--text-xs);
@@ -136,6 +197,7 @@
 }
 
 .ctaCard {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -144,6 +206,22 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.ctaCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent),
+    rgba(185, 28, 28, 0.2),
+    transparent
+  );
 }
 
 .ctaLabel {
