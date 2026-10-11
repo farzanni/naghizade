@@ -18,7 +18,7 @@ const BRAND_WORDS = [
 function HeroBackground() {
   return (
     <div className={styles.bg}>
-      <picture>
+      <picture className={styles.heroPicture}>
         <source
           srcSet="
             /images/assets/hero-logistics-768.webp   768w,
