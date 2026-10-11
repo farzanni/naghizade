@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "check:perf": "node scripts/check-perf.mjs",
+    "prebuild": "node scripts/check-perf.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
