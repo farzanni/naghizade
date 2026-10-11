@@ -135,7 +135,10 @@
   transform: translateY(-2px);
 }
 
-/* ── Navigation arrows ── */
+/* ── Navigation arrows ──
+   RTL reading order: forward is to the left.
+   .navNext sits on the left and points left;
+   .navPrev sits on the right and points right. */
 .navBtn {
   position: absolute;
   top: 50%;
@@ -157,30 +160,41 @@
   transition:
     background-color var(--transition),
     border-color var(--transition),
-    box-shadow var(--transition);
+    box-shadow var(--transition),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .navBtn:hover {
   background: rgba(185, 28, 28, 0.4);
   border-color: var(--color-accent);
   box-shadow: 0 0 20px var(--color-accent-glow);
+  transform: translateY(-50%) scale(1.06);
 }
 
-.navPrev { left: var(--space-6); }
-.navNext { right: var(--space-6); }
+.navNext { left: var(--space-6); }
+.navPrev { right: var(--space-6); }
 
 /* Chevrons drawn with borders — no icon font needed */
-.navIconPrev,
-.navIconNext {
+.navIconNext,
+.navIconPrev {
   display: block;
   width: 10px;
   height: 10px;
-  border-left: 2px solid #fff;
-  border-bottom: 2px solid #fff;
 }
 
-.navIconPrev { transform: rotate(45deg) translate(1px, -1px); }
-.navIconNext { transform: rotate(-135deg) translate(1px, -1px); }
+/* Points left (forward in RTL) */
+.navIconNext {
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(45deg) translate(1px, -1px);
+}
+
+/* Points right (back in RTL) */
+.navIconPrev {
+  border-right: 2px solid #fff;
+  border-top: 2px solid #fff;
+  transform: rotate(45deg) translate(-1px, 1px);
+}
 
 /* ── Dots ── */
 .dots {
@@ -237,6 +251,31 @@
   transform: scale(1.35);
 }
 
+/* ── Progress bar: fills over one autoplay interval ── */
+.progressTrack {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 6;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  width: 100%;
+  background: var(--color-accent);
+  transform-origin: left;
+  animation: progressFill 7s linear forwards;
+}
+
+@keyframes progressFill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
 /* ── Screen-reader only ── */
 .srOnly {
   position: absolute;
@@ -291,8 +330,8 @@
     height: 38px;
   }
 
-  .navPrev { left: var(--space-3); }
-  .navNext { right: var(--space-3); }
+  .navNext { left: var(--space-3); }
+  .navPrev { right: var(--space-3); }
 
   .dots { bottom: var(--space-6); }
 
@@ -305,4 +344,9 @@
     width: 7px;
     height: 7px;
   }
+}
+
+/* Short landscape screens */
+@media (max-height: 640px) and (min-width: 769px) {
+  .screen { min-height: 620px; }
 }

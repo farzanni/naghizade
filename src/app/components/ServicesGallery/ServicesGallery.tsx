@@ -10,10 +10,12 @@ import styles from "./ServicesGallery.module.css";
    Text fades onto the photo (no box). Images preloaded.
    Dots: one large circular active indicator, small white idle.
    Auto-advances every 7s; pauses on hover, focus and interaction.
+   RTL: "next" points left, "previous" points right.
+   Swipe: touch left/right on mobile.
    ════════════════════════════════════════════════════════════ */
 
 const AUTOSLIDE_MS = 7000;
-const RESUME_AFTER_MS = 10000;
+const RESUME_AFTER_MS = 12000;
 
 const SECTIONS = [
   {
@@ -72,6 +74,9 @@ const SECTIONS = [
   },
 ] as const;
 
+/** Minimum horizontal travel (px) for a touch to count as a swipe. */
+const SWIPE_THRESHOLD = 48;
+
 function FullScreenSection({
   section,
 }: {
@@ -80,6 +85,8 @@ function FullScreenSection({
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   const total = section.slides.length;
   const current = section.slides[active];
@@ -89,14 +96,14 @@ function FullScreenSection({
     [total]
   );
 
-  /** Manual interaction pauses autoplay, then resumes after a delay. */
+  /** Any deliberate interaction pauses autoplay, then resumes later. */
   const pauseBriefly = useCallback(() => {
     setPaused(true);
     if (resumeTimer.current) clearTimeout(resumeTimer.current);
     resumeTimer.current = setTimeout(() => setPaused(false), RESUME_AFTER_MS);
   }, []);
 
-  /** Step one slide, pausing autoplay so the user's choice sticks. */
+  /** Step one slide. In RTL, +1 advances (moves left), -1 goes back. */
   const step = useCallback(
     (delta: number) => {
       pauseBriefly();
@@ -120,8 +127,28 @@ function FullScreenSection({
     return () => clearInterval(timer);
   }, [go, active, paused]);
 
+  // ── Swipe: touch-left advances, touch-right goes back (mirrors RTL) ──
+  const onTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStartX.current = t.clientX;
+    touchStartY.current = t.clientY;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStartX.current;
+    const dy = t.clientY - (touchStartY.current ?? 0);
+
+    // Only treat as a swipe when horizontal travel clearly dominates.
+    if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      step(dx < 0 ? 1 : -1);
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   const onKeyDown = (e: React.KeyboardEvent) => {
-    // RTL: ArrowLeft advances, ArrowRight goes back.
     if (e.key === "ArrowLeft") {
       e.preventDefault();
       step(1);
@@ -137,6 +164,8 @@ function FullScreenSection({
       id={section.id}
       aria-label={section.heading}
       onKeyDown={onKeyDown}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -172,15 +201,7 @@ function FullScreenSection({
         </div>
       </div>
 
-      <button
-        type="button"
-        className={`${styles.navBtn} ${styles.navPrev}`}
-        onClick={() => step(-1)}
-        aria-label="اسلاید قبلی"
-      >
-        <span className={styles.navIconPrev} aria-hidden="true" />
-      </button>
-
+      {/* ── Arrows: RTL order — next on the left, previous on the right ── */}
       <button
         type="button"
         className={`${styles.navBtn} ${styles.navNext}`}
@@ -190,6 +211,16 @@ function FullScreenSection({
         <span className={styles.navIconNext} aria-hidden="true" />
       </button>
 
+      <button
+        type="button"
+        className={`${styles.navBtn} ${styles.navPrev}`}
+        onClick={() => step(-1)}
+        aria-label="اسلاید قبلی"
+      >
+        <span className={styles.navIconPrev} aria-hidden="true" />
+      </button>
+
+      {/* ── Dots: current slide highlighted, tappable, with progress bar ── */}
       <div className={styles.dots} role="tablist" aria-label="انتخاب اسلاید">
         {section.slides.map((slide, i) => (
           <button
@@ -208,6 +239,17 @@ function FullScreenSection({
           />
         ))}
       </div>
+
+      {/* ── Progress bar: fills over the autoplay interval ── */}
+      {!paused && (
+        <div
+          className={styles.progressTrack}
+          aria-hidden="true"
+          key={`progress-${active}-${section.id}`}
+        >
+          <div className={styles.progressFill} />
+        </div>
+      )}
 
       {/* Announce slide changes to screen readers */}
       <p className={styles.srOnly} aria-live="polite">
