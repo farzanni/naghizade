@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import ErrorReporter from "./components/ErrorReporter";
 import { BUSINESS } from "@/lib/site";
 
 const SITE_URL = "https://naghizade.vercel.app";
@@ -135,6 +136,7 @@ export default function RootLayout({
           پرش به محتوای اصلی
         </a>
         <NavBar />
+        <ErrorReporter />
         <main id="main">{children}</main>
         <Footer />
       </body>
