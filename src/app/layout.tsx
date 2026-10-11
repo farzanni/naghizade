@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import { BUSINESS } from "@/lib/site";
 
 const SITE_URL = "https://naghizade.vercel.app";
 const SITE_NAME = "بازرگانی نقی‌زاده";
@@ -88,11 +89,11 @@ const organizationJsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/favicon.ico`,
   description: SITE_DESC,
-  telephone: "+989123456789",
+  telephone: BUSINESS.phoneHref,
   address: {
     "@type": "PostalAddress",
-    addressCountry: "IR",
-    addressLocality: "تهران",
+    addressCountry: "CN",
+    addressLocality: "چین",
   },
   knowsAbout: [
     "ماشین‌آلات راه‌سازی",

@@ -17,11 +17,12 @@ export const BUSINESS = {
   shortName: "نقی‌زاده",
   tagline: "مرجع تخصصی واردات، خرید و فروش ماشین‌آلات راه‌سازی، معدنی و ساختمانی",
 
-  phone: "۰۹۱۲۳۴۵۶۷۸۹",
-  phoneHref: "+989123456789",
+  phone: "۰۹۳۳۷۱۸۸۲۲۵",
+  phoneHref: "+989337188225",
   email: "info@naghizade.ir",
 
-  address: "تهران، ایران",
+  // TODO: replace with the full China address once provided.
+  address: "چین",
   hours: "شنبه تا پنجشنبه، ۹ تا ۱۸",
 } as const;
 
