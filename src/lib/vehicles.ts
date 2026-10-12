@@ -1,4 +1,4 @@
-import { readdirSync, existsSync, readFileSync } from "fs";
+import { readdirSync, existsSync, readFileSync, statSync } from "fs";
 import { join } from "path";
 
 /* ════════════════════════════════════════════════════════════
@@ -25,6 +25,11 @@ export interface Vehicle {
   description: string;
   specifications: Record<string, string>;
   available: boolean;
+  /** ISO date of the content file's last modification. Feeds sitemap
+   *  lastmod so it reflects real content changes, not build time —
+   *  an always-"now" lastmod is distrusted by Google and wastes crawl
+   *  budget. */
+  updatedAt: string;
 }
 
 /**
@@ -65,7 +70,7 @@ function groupForCategory(category: string): VehicleGroup {
 
 const vehiclesDir = join(process.cwd(), "content", "vehicles");
 
-function parseVehicle(raw: string): Vehicle | null {
+function parseVehicle(raw: string, updatedAt: string): Vehicle | null {
   try {
     const data = JSON.parse(raw) as Partial<Vehicle>;
     if (!data.slug || !data.name) return null;
@@ -87,6 +92,7 @@ function parseVehicle(raw: string): Vehicle | null {
       description: data.description ?? "",
       specifications: data.specifications ?? {},
       available: data.available !== false,
+      updatedAt,
     };
   } catch {
     return null;
@@ -107,7 +113,11 @@ export function getVehicles(): Vehicle[] {
   const files = readdirSync(vehiclesDir).filter((f) => f.endsWith(".json"));
 
   allVehicles = files
-    .map((f) => parseVehicle(readFileSync(join(vehiclesDir, f), "utf-8")))
+    .map((f) => {
+      const full = join(vehiclesDir, f);
+      const mtime = statSync(full).mtime.toISOString();
+      return parseVehicle(readFileSync(full, "utf-8"), mtime);
+    })
     .filter((v): v is Vehicle => v !== null)
     .sort((a, b) => {
       if (a.available !== b.available) return a.available ? -1 : 1;
