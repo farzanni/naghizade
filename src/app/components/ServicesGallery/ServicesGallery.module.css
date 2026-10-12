@@ -300,10 +300,25 @@
   gap: var(--space-3);
 }
 
+/* The button is the tap target; the visible dot is drawn with ::before
+   so the target can be comfortably large without enlarging the dot. */
 .dot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px; /* WCAG 2.5.8 minimum target */
+  height: 44px; /* comfortable vertical target */
   padding: 0;
   border: none;
+  background: transparent;
   cursor: pointer;
+  transition: min-width var(--duration-slow) var(--ease-out);
+}
+
+.dot::before {
+  content: "";
+  display: block;
   border-radius: 50%;
   transition:
     width var(--duration-slow) var(--ease-out),
@@ -314,31 +329,37 @@
 }
 
 .dotActive {
-  position: relative;
-  width: 42px;
-  height: 42px;
+  min-width: 44px;
+}
+
+.dotActive::before {
+  width: 40px;
+  height: 40px;
   background: var(--color-accent);
   box-shadow:
     0 0 26px var(--color-accent-glow-strong),
     inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
+/* Inner ring on the active dot */
 .dotActive::after {
   content: "";
   position: absolute;
-  inset: 7px;
+  width: 26px;
+  height: 26px;
   border: 2px solid rgba(255, 255, 255, 0.5);
   border-radius: 50%;
+  pointer-events: none;
 }
 
-.dotIdle {
+.dotIdle::before {
   width: 9px;
   height: 9px;
   background: rgba(255, 255, 255, 0.42);
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.45);
 }
 
-.dotIdle:hover {
+.dotIdle:hover::before {
   background: rgba(255, 255, 255, 0.85);
   transform: scale(1.4);
 }
@@ -462,16 +483,21 @@
   .navNext { left: var(--space-3); }
   .navPrev { right: var(--space-3); }
 
-  .dots { bottom: var(--space-6); }
+  .dots { bottom: var(--space-6); gap: var(--space-2); }
 
-  .dotActive {
+  .dotActive { min-width: 40px; }
+
+  .dotActive::before {
     width: 30px;
     height: 30px;
   }
 
-  .dotActive::after { inset: 5px; }
+  .dotActive::after {
+    width: 20px;
+    height: 20px;
+  }
 
-  .dotIdle {
+  .dotIdle::before {
     width: 7px;
     height: 7px;
   }

@@ -106,6 +106,30 @@ function FullScreenSection({
   const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  /* Autoplay only while the section is actually on screen. Without
+     this the timer starts at page load, so a visitor who scrolls down
+     arrives mid-cycle and never sees the first slide. */
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    // No observer support: fall back to always-on, as before.
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => setInView(entries[0]?.isIntersecting ?? false),
+      // Fire once roughly half the section fills the viewport.
+      { threshold: 0.45 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   /* Entrance animations are CSS-driven, but a backgrounded or
      throttled tab never advances the animation clock — which would
@@ -148,14 +172,14 @@ function FullScreenSection({
     };
   }, []);
 
-  // Autoplay — skipped while paused or when reduced motion is preferred.
+  // Autoplay — only while on screen, not paused, and motion is welcome.
   useEffect(() => {
-    if (paused) return;
+    if (!inView || paused) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const timer = setInterval(() => go(active + 1), AUTOSLIDE_MS);
     return () => clearInterval(timer);
-  }, [go, active, paused]);
+  }, [go, active, paused, inView]);
 
   // ── Swipe: touch-left advances, touch-right goes back (mirrors RTL) ──
   const onTouchStart = (e: React.TouchEvent) => {
@@ -190,6 +214,7 @@ function FullScreenSection({
 
   return (
     <section
+      ref={sectionRef}
       className={styles.screen}
       id={section.id}
       aria-label={section.heading}
@@ -300,7 +325,7 @@ function FullScreenSection({
       </p>
 
       {/* ── Progress bar: fills over one autoplay interval ── */}
-      {!paused && (
+      {!paused && inView && (
         <div
           className={styles.progressTrack}
           aria-hidden="true"
