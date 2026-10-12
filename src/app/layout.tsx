@@ -72,6 +72,10 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+  // Google Search Console ownership proof.
+  verification: {
+    google: "otgXCDYe5RqXMM0fnn91jrpeBn1x6KVXc5fYvqP6XnM",
+  },
   formatDetection: {
     telephone: false,
   },
