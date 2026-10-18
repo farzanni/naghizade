@@ -28,7 +28,7 @@ export const BUSINESS = {
   /** China office — direct tel: works from a Chinese carrier. */
   chinaPhone: "+8615529232132",
 
-  email: "info@naghizade.ir",
+  email: "naghizadeh.mohammad79@yahoo.com",
 
   address: "陕西省西安市雁塔区悦文路",
   hours: "۲۴/۷ در خدمت",
