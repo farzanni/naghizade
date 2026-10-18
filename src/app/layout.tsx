@@ -98,8 +98,14 @@ const organizationJsonLd = {
   address: {
     "@type": "PostalAddress",
     addressCountry: "CN",
-    addressLocality: "چین",
+    addressRegion: "استان شاآنشي",
+    addressLocality: "شهر شیآن",
+    streetAddress: "陕西省西安市雁塔区悦文路",
+    ...(BUSINESS.address && { description: BUSINESS.address }),
   },
+  ...(BUSINESS.officeLocationUrl && {
+    hasMap: BUSINESS.officeLocationUrl,
+  }),
   knowsAbout: [
     "ماشین‌آلات راه‌سازی",
     "ماشین‌آلات معدنی",
