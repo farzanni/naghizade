@@ -107,6 +107,21 @@
   gap: var(--space-1);
 }
 
+.mapLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-block: var(--space-2);
+  color: var(--color-accent-bright);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.mapLink:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
 /* ── Bottom bar ── */
 .bottom {
   padding-top: var(--space-6);

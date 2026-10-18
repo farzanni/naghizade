@@ -262,6 +262,37 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.whatsAppCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-4);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: #fff;
+  background: #1faa55;
+  border: 1px solid #178a44;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(31, 170, 85, 0.3);
+  transition:
+    background-color var(--transition),
+    box-shadow var(--transition),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.whatsAppCta:hover {
+  color: #fff;
+  background: #25bd60;
+  box-shadow: 0 6px 20px rgba(31, 170, 85, 0.45);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 900px) {

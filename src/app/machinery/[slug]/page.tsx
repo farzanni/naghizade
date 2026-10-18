@@ -1,5 +1,5 @@
 import { getVehicle, getVehicles } from "@/lib/vehicles";
-import { SITE_URL, BUSINESS } from "@/lib/site";
+import { SITE_URL, BUSINESS, WHATSAPP_URL } from "@/lib/site";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -190,10 +190,12 @@ export default async function VehicleDetailPage({
 
                 <div className={styles.ctaButtons}>
                   <a
-                    href={`tel:${BUSINESS.phoneHref}`}
+                    href={WHATSAPP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`btn btnPrimary btnBlock`}
                   >
-                    تماس تلفنی با کارشناس
+                    تماس واتساپ با کارشناس
                   </a>
                   <Link href="/#contact" className="btn btnGhost btnBlock">
                     ثبت درخواست مشاوره
