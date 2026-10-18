@@ -141,18 +141,14 @@
 .trust {
   position: relative;
   background:
-    radial-gradient(
-      100% 140% at 50% 0%,
-      rgba(185, 28, 28, 0.04),
-      transparent 55%
-    ),
-    var(--color-surface);
+    radial-gradient(100% 140% at 50% 0%, rgba(185, 28, 28, 0.05), transparent 55%),
+    var(--color-bg);
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
 }
 
 .trustHead {
-  max-width: 66ch;
+  max-width: 1100px;
   margin: 0 auto var(--space-10);
   text-align: center;
 }
